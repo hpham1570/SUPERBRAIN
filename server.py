@@ -20,7 +20,11 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import google.generativeai as genai
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
 
 # --- SUPERBRAIN REASONING ENGINE v4.0 ---
 SUPERBRAIN_MODE = True
