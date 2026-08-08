@@ -1,0 +1,29 @@
+Created At: 2026-07-19T05:57:12Z
+Completed At: 2026-07-19T05:57:12Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 972
+Total Bytes: 51449
+Showing lines 470 to 490
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+470:                         {"id": "developer", "name": "Gatekeeper-Guard", "role": "Security Coordinator", "prompt": "Generate visitor badges and print files."},
+471:                         {"id": "reviewer", "name": "Host-Notifier", "role": "Internal Routing", "prompt": "Request authorization triggers to access host offices."}
+472:                     ]
+473:                 else:
+474:                     agents_seq = [
+475:                         {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Coordinate coding and audits."},
+476:                         {"id": "planner", "name": "Aether-Planner", "role": "Project Planner", "prompt": "Decompose high-level goals into concrete, structured step-by-step task lists, establish prioritization, and delegate instructions to technical sub-agents."},
+477:                         {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+478:                         {"id": "developer", "name": "Code-Architect", "role": "Developer", "prompt": "Write application code index.js and database.js."},
+479:                         {"id": "db_developer", "name": "DB-Architect", "role": "Database Engineer", "prompt": "Design optimized relational database schemas, write database seeding and migration scripts, and troubleshoot SQL errors."},
+480:                         {"id": "cfo", "name": "Prof-CFO", "role": "Chief Financial Officer (Harvard CS Prof)", "prompt": "Act as a Chief Financial Officer with a PhD in Computer Science from Harvard. Evaluate technical ROI, project resource budgeting, API token costs, and AI execution efficiency. Review architectural proposals from a financial and technical feasibility perspective."},
+481:                         {"id": "senior_developer", "name": "Senior-Coder", "role": "Senior Developer", "prompt": "Write highly optimized, clean, and well-structured source code, install dependencies, and run validation scripts."},
+482:                         {"id": "reviewer", "name": "Sentinel-Auditor", "role": "QA", "prompt": "Review files for bugs and write security audits."},
+483:                         {"id": "devops", "name": "Aether-DevOps", "role": "DevOps Engineer", "prompt": "Configure CI/CD pipelines, write Dockerfiles and deployment scripts, manage environment variables, and verify production deployment status."}
+484:                     ]
+485: 
+486:             # If mock mode, keep the standard hardcoded sequence for simplicity
+487:             if IS_MOCK_MODE:
+488:                 await self.run_mock_scenario_sequence(scenario_key, agents_seq)
+489:                 return
+490: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

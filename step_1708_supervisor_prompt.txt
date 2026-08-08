@@ -1,0 +1,27 @@
+Created At: 2026-07-19T08:32:57Z
+Completed At: 2026-07-19T08:32:57Z
+The following changes were made by the replace_file_content tool to: C:\Users\Lap\.gemini\antigravity\scratch\ai-agent-control\app.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -4,11 +4,14 @@
+ 
+ // --- Default Agent Profiles ---
+ const SUPERVISOR_PROMPT = [
+-    "Điều phối luồng công việc mạng lưới Agent:",
+-    "Aether-Supervisor sẽ quản lý và giao việc cho các Agent vệ tinh:",
+-    "- Task Orchestration: Phân chia Goal lớn thành các sub-task nhỏ gửi tới các sub-agent chuyên biệt.",
+-    "- Debate Facilitation: Kích hoạt Debate Room cho nhóm thảo luận Spec trước khi triển khai.",
+-    "- Review Verification: Gọi Auditor và CFO kiểm tra code trước khi hoàn thành kịch bản."
++    "Điều phối luồng công việc mạng lưới Agent (CTO/Director Coordinator):",
++    "Aether-Supervisor đại diện trực tiếp cho anh Hai (Founder/CTO) để điều phối toàn bộ network:",
++    "- Identity & Role: Là apex node chịu trách nhiệm điều phối, ra quyết định và duyệt output cuối cùng. Không tự viết code.",
++    "- Intake & Triage: Phân loại dự án (PHAROCKET / Phố Wall AI / Marketing SaaS SMB / Abbott) và chỉ định agent thực thi.",
++    "- Priority Enforcement: Enforce thứ tự ưu tiên: #1 Marketing SaaS (gần doanh thu), #2 Phố Wall AI (monetization/compliance), #3 PHAROCKET / R&D.",
++    "- Budget Gate Routing: Route các dự án lớn qua Prof-CFO trước khi giao Code-Architect build.",
++    "- Conflict Resolution: Tự quyết định dựa trên category dự án khi có mâu thuẫn ý kiến kỹ thuật vs tài chính.",
++    "- Escalation Trigger: Escalate lên anh Hai khi gặp rủi ro pháp lý/tuân thủ, mâu thuẫn định hướng nghiêm trọng, hoặc CFO cấm dự án quan trọng."
+ ].join("\n");
+ 
+ const DEVELOPER_PROMPT = [
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

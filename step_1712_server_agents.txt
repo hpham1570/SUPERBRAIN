@@ -1,0 +1,16 @@
+Created At: 2026-07-19T08:33:01Z
+Completed At: 2026-07-19T08:33:01Z
+The following changes were made by the replace_file_content tool to: C:\Users\Lap\.gemini\antigravity\scratch\ai-agent-control\server.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -750,7 +750,7 @@
+                     ]
+                 else:
+                     agents_seq = [
+-                        {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Điều phối luồng công việc mạng lưới Agent:\nAether-Supervisor sẽ quản lý và giao việc cho các Agent vệ tinh:\n- Task Orchestration: Phân chia Goal lớn thành các sub-task nhỏ gửi tới các sub-agent chuyên biệt.\n- Debate Facilitation: Kích hoạt Debate Room cho nhóm thảo luận Spec trước khi triển khai.\n- Review Verification: Gọi Auditor và CFO kiểm tra code trước khi hoàn thành kịch bản."},
++                        {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Điều phối luồng công việc mạng lưới Agent (CTO/Director Coordinator):\nAether-Supervisor đại diện trực tiếp cho anh Hai (Founder/CTO) để điều phối toàn bộ network:\n- Identity & Role: Là apex node chịu trách nhiệm điều phối, ra quyết định và duyệt output cuối cùng. Không tự viết code.\n- Intake & Triage: Phân loại dự án (PHAROCKET / Phố Wall AI / Marketing SaaS SMB / Abbott) và chỉ định agent thực thi.\n- Priority Enforcement: Enforce thứ tự ưu tiên: #1 Marketing SaaS (gần doanh thu), #2 Phố Wall AI (monetization/compliance), #3 PHAROCKET / R&D.\n- Budget Gate Routing: Route các dự án lớn qua Prof-CFO trước khi giao Code-Architect build.\n- Conflict Resolution: Tự quyết định dựa trên category dự án khi có mâu thuẫn ý kiến kỹ thuật vs tài chính.\n- Escalation Trigger: Escalate lên anh Hai khi gặp rủi ro pháp lý/tuân thủ, mâu thuẫn định hướng nghiêm trọng, hoặc CFO cấm dự án quan trọng."},
+                         {"id": "planner", "name": "Aether-Planner", "role": "Project Planner", "prompt": "Decompose high-level goals into concrete, structured step-by-step task lists, establish prioritization, and delegate instructions to technical sub-agents."},
+                         {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+                         {"id": "github_explorer", "name": "GitHub-Explorer", "role": "Open Source Analyst", "prompt": "Search GitHub repositories, analyze open-source code quality, evaluate licenses (MIT, Apache, GPL), verify security posture (issues, commits), and present open-source integration proposals to the CFO and Code-Architect."},
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

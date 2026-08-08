@@ -1,0 +1,154 @@
+Created At: 2026-07-19T11:48:46Z
+Completed At: 2026-07-19T11:48:59Z
+The following changes were made by the replace_file_content tool to: C:\Users\Lap\.gemini\antigravity\scratch\ai-agent-control\server.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1298,40 +1298,110 @@
+         )
+         await self.send_log(fellow_1["id"], "observation", res)
+         res = await self.execute_agent_loop(fellow_1, "Formulate deduction logic and write findings.", "Logic verification.")
+-            # Resolve agents dynamically by ID
+-            peer_chair = next((a for a in agents_seq if a["id"] == "supervisor"), agents_seq[0])
+-            dean = next((a for a in agents_seq if a["id"] == "dean"), None)
+-            dept_head = next((a for a in agents_seq if a["id"] == "dept_head"), None)
+-            planner = next((a for a in agents_seq if a["id"] == "planner"), None)
+-            ta_lead = next((a for a in agents_seq if a["id"] == "ta_lead"), None)
+-            fellow_1 = next((a for a in agents_seq if a["id"] == "developer"), None)
+-            fellow_2 = next((a for a in agents_seq if a["id"] == "senior_developer"), None)
+-            fellow_3 = next((a for a in agents_seq if a["id"] == "market_analyst"), None)
+-            grading_agent = next((a for a in agents_seq if a["id"] == "reviewer"), None)
+-            integrity_auditor = next((a for a in agents_seq if a["id"] == "integrity_auditor"), None)
+-            ta_announcement = next((a for a in agents_seq if a["id"] == "ta_announcement"), None)
+-
+-            # Step 1: Department-Head routes domain
+-            if dept_head:
+-                await self.websocket.send_json({"type": "task_progress", "progress": 10})
+-                res = await self.execute_agent_loop(dept_head, f"Analyze domain and route resources for target: {scenario_key}", context_history, memory_block)
+-
+-            # Step 2: Curriculum-Planner plans
+-            if planner:
+-                await self.websocket.send_json({"type": "task_progress", "progress": 25})
+-                await self.websocket.send_json({
+-                    "type": "delegate_animation", 
+-                    "from": dept_head["id"] if dept_head else peer_chair["id"], 
+-                    "to": planner["id"], 
+-                    "content": "Decompose task and write reasoning_plan.md."
+-                })
+-                plan_content = f"# Academic Reasoning Plan: {scenario_key}\n- Axiom A: Set academic goals.\n- Axiom B: Execute multi-instance consistency verification.\n"
+-                res = await self.run_tool(planner["id"], "write_file", json.dumps({"filename": "reasoning_plan.md", "content": plan_content}))
+-                await self.send_log(planner["id"], "observation", res)
+-                res = await self.execute_agent_loop(planner, "Decompose target into sub-tasks and write reasoning_plan.md.", context_history, memory_block)
+-
+-            # Step 3: TA-Lead coordinates
+-            if ta_lead:
++        
++        # Step 5: Grading Agent reviews
++        await self.websocket.send_json({"type": "task_progress", "progress": 80})
++        await self.websocket.send_json({"type": "delegate_animation", "from": fellow_1["id"], "to": grading_agent["id"], "content": "Audit proof paths for logic gaps."})
++        res = await self.execute_agent_loop(
++            grading_agent,
++            "Review reasoning_path_1.txt for correctness. Score the logic validity.",
++            "Logic Audit."
++        )
++        
++        # Step 6: Dean final review
++        await self.websocket.send_json({"type": "task_progress", "progress": 95})
++        await self.websocket.send_json({"type": "delegate_animation", "from": grading_agent["id"], "to": dean["id"], "content": "Final approval and academic sign-off."})
++        res = await self.execute_agent_loop(
++            dean,
++            "Review peer grading scores. Perform academic sign-off and grant publication rights.",
++            "Dean Sign-off."
++        )
++        
++        # Step 7: TA Announcement publishes report
++        await self.websocket.send_json({"type": "task_progress", "progress": 100})
++        await self.websocket.send_json({"type": "delegate_animation", "from": dean["id"], "to": ta_announcement["id"], "content": "Publish final report."})
++        
++        report_content = f"""=====================================
++         FINAL REASONING REPORT
++=====================================
++Goal: {scenario_key}
++Verdict: APPROVED BY DEAN
++Status: Successful run.
++All 15 agents coordinated cleanly.
++====================================="""
++        res = await self.run_tool(
++            ta_announcement["id"],
++            "write_file",
++            json.dumps({"filename": "final_report.md", "content": report_content})
++        )
++        await self.send_log(ta_announcement["id"], "observation", res)
++        await self.websocket.send_json({"type": "finished"})
++
++    async def run_dynamic_orchestrator(self, scenario_key, agents_seq, context_history, memory_block):
++        """Standard live logic routing loop for Academic Reasoning Faculty."""
++        # Resolve agents dynamically by ID
++        peer_chair = next((a for a in agents_seq if a["id"] == "supervisor"), agents_seq[0])
++        dean = next((a for a in agents_seq if a["id"] == "dean"), None)
++        dept_head = next((a for a in agents_seq if a["id"] == "dept_head"), None)
++        planner = next((a for a in agents_seq if a["id"] == "planner"), None)
++        ta_lead = next((a for a in agents_seq if a["id"] == "ta_lead"), None)
++        fellow_1 = next((a for a in agents_seq if a["id"] == "developer"), None)
++        fellow_2 = next((a for a in agents_seq if a["id"] == "senior_developer"), None)
++        fellow_3 = next((a for a in agents_seq if a["id"] == "market_analyst"), None)
++        grading_agent = next((a for a in agents_seq if a["id"] == "reviewer"), None)
++        integrity_auditor = next((a for a in agents_seq if a["id"] == "integrity_auditor"), None)
++        ta_announcement = next((a for a in agents_seq if a["id"] == "ta_announcement"), None)
++
++        # Step 1: Department-Head routes domain
++        if dept_head:
++            await self.websocket.send_json({"type": "task_progress", "progress": 10})
++            res = await self.execute_agent_loop(dept_head, f"Analyze domain and route resources for target: {scenario_key}", context_history, memory_block)
++
++        # Step 2: Curriculum-Planner plans
++        if planner:
++            await self.websocket.send_json({"type": "task_progress", "progress": 25})
++            await self.websocket.send_json({
++                "type": "delegate_animation", 
++                "from": dept_head["id"] if dept_head else peer_chair["id"], 
++                "to": planner["id"], 
++                "content": "Decompose task and write reasoning_plan.md."
++            })
++            plan_content = f"# Academic Reasoning Plan: {scenario_key}\n- Axiom A: Set academic goals.\n- Axiom B: Execute multi-instance consistency verification.\n"
++            res = await self.run_tool(planner["id"], "write_file", json.dumps({"filename": "reasoning_plan.md", "content": plan_content}))
++            await self.send_log(planner["id"], "observation", res)
++            res = await self.execute_agent_loop(planner, "Decompose target into sub-tasks and write reasoning_plan.md.", context_history, memory_block)
++
++        # Step 3: TA-Lead coordinates
++        if ta_lead:
++            await self.websocket.send_json({"type": "task_progress", "progress": 45})
++            await self.websocket.send_json({
++                "type": "delegate_animation", 
++                "from": planner["id"] if planner else peer_chair["id"], 
++                "to": ta_lead["id"], 
++                "content": "Coordinate Research Fellow instances."
++            })
++            res = await self.execute_agent_loop(ta_lead, "Assign tasks and coordinate Research Fellow instances.", context_history, memory_block)
++
++        # Step 4: Research-Fellow-1 solves logic
++        if fellow_1:
++            await self.websocket.send_json({"type": "task_progress", "progress": 65})
++            await self.websocket.send_json({
++                "type": "delegate_animation", 
++                "from": ta_lead["id"] if ta_lead else peer_chair["id"], 
++                "to": fellow_1["id"], 
++                "content": "Execute reasoning code."
++            })
++            res = await self.execute_agent_loop(fellow_1, f"Solve logic and write files for goal: {scenario_key}", context_history, memory_block)
++
++        # Step 5: Grading Agent reviews
++        if grading_agent and fellow_1:
++            await self.websocket.send_json({"type": "task_progress", "progress": 80})
++            await self.websocket.send_json({
++                "type": "delegate_animation", 
++                "from": fellow_1["id"], 
++                "to": grading_agent["id"], 
++                "content": "Audit proof pathways."
++                })
+                 await self.websocket.send_json({"type": "task_progress", "progress": 45})
+             res = await self.execute_agent_loop(rev_agent, "Analyze index.js for code quality and write audit.md.", "QA checks")
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.
+
+We did our best to apply changes despite some inaccuracies. Double check if the edit applied is what you intended.

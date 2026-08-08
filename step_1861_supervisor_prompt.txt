@@ -1,0 +1,229 @@
+Created At: 2026-07-19T11:47:52Z
+Completed At: 2026-07-19T11:47:52Z
+The following changes were made by the replace_file_content tool to: C:\Users\Lap\.gemini\antigravity\scratch\ai-agent-control\app.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3,70 +3,160 @@
+    ========================================================================== */
+ 
+ // --- Default Agent Profiles ---
+-const SUPERVISOR_PROMPT = [
+-    "Điều phối luồng công việc mạng lưới Agent (CTO/Director Coordinator):",
+-    "Aether-Supervisor đại diện trực tiếp cho anh Hai (Founder/CTO) để điều phối toàn bộ network:",
+-    "- Identity & Role: Là apex node chịu trách nhiệm điều phối, ra quyết định và duyệt output cuối cùng. Không tự viết code.",
+-    "- Intake & Triage: Phân loại dự án (PHAROCKET / Phố Wall AI / Marketing SaaS SMB / Abbott) và chỉ định agent thực thi.",
+-    "- Priority Enforcement: Enforce thứ tự ưu tiên: #1 Marketing SaaS (gần doanh thu), #2 Phố Wall AI (monetization/compliance), #3 PHAROCKET / R&D.",
+-    "- Budget Gate Routing: Route các dự án lớn qua Prof-CFO trước khi giao Code-Architect build.",
+-    "- Conflict Resolution: Tự quyết định dựa trên category dự án khi có mâu thuẫn ý kiến kỹ thuật vs tài chính.",
+-    "- Escalation Trigger: Escalate lên anh Hai khi gặp rủi ro pháp lý/tuân thủ, mâu thuẫn định hướng nghiêm trọng, hoặc CFO cấm dự án quan trọng."
+-].join("\n");
+-
+-const DEVELOPER_PROMPT = [
+-    "Triển khai mã nguồn và thiết lập hệ thống:",
+-    "Code-Architect sẽ trực tiếp viết file và thực thi câu lệnh:",
+-    "- Code Scaffolding: Tạo mới hoặc chỉnh sửa file mã nguồn Javascript hoặc Python.",
+-    "- System Command Execution: Cài đặt package dependencies và chạy lệnh terminal.",
+-    "- Local Sandbox Verification: Tự động chạy biên dịch, gỡ lỗi cú pháp và runtime crash qua node/python sandbox."
+-].join("\n");
+-
+-const REVIEWER_PROMPT = [
+-    "Kiểm thử mã nguồn và đánh giá an ninh:",
+-    "Sentinel-Auditor sẽ quét lỗi và kiểm định chất lượng tệp tin:",
+-    "- Source Code Review: Phát hiện các lỗ hổng bảo mật, lỗi logic và lỗ hổng SQL Injection.",
+-    "- Lint & Bug Scanning: Đảm bảo code sạch lỗi cú pháp, tuân thủ quy chuẩn trước khi lưu trữ.",
+-    "- Verification Audit: Đưa ra quyết định phê duyệt (GO) hoặc bác bỏ (NO-GO) cho nhà phát triển sửa code."
+-].join("\n");
+-
+-const CFO_PROMPT = [
+-    "Nhiệm vụ kiểm toán tài chính và phê duyệt ngân sách:",
+-    "Prof-CFO (Giáo sư Harvard CS) sẽ tính toán và phê duyệt chi phí phát triển:",
+-    "- Cost-Benefit Audit: Tính toán chi phí giờ công dev, compute và API cost cho từng tính năng.",
+-    "- Monetization Reality Check: Phân biệt rõ R&D (đốt tiền) vs sản phẩm gần/có doanh thu.",
+-    "- Budget Gate: Yêu cầu trả lời 3 câu trước khi code (Ai trả tiền? Thiệt hại gì nếu không làm? Break-even khi nào?).",
+-    "- Portfolio Prioritization: Ưu tiên phát triển Marketing SaaS SMB #1, Phố Wall AI #2, PHAROCKET R&D.",
+-    "- Output Format: Trả về Verdict (GO / NO-GO), Số liệu cụ thể, Rủi ro tài chính và Khuyến nghị."
+-].join("\n");
+-
+-const SPY_PROMPT = [
+-    "Thám thính giá cả, uptime và ngăn chặn rò rỉ dữ liệu nhạy cảm:",
+-    "Aether-Spy sẽ giám sát các cổng API ngoại vi và bảo vệ payload bảo mật:",
+-    "- API Uptime & Latency Tracker: Theo dõi 4 cổng API (OpenAI, Anthropic, DeepSeek, Grok) để định tuyến mô hình tối ưu.",
+-    "- Cost Arbitrage: Phát hiện cơ hội giảm giá sâu (ví dụ DeepSeek V3) để đề xuất giảm thiểu chi phí.",
+-    "- Data Leak Guard: Tự động quét và chặn các payload rò rỉ API Keys (sk-, aiza-) hoặc DB URLs chứa mật khẩu rõ.",
+-    "- External Knowledge Harvester: Tự động quét các changelogs, tech blogs để nạp bài học bảo mật mới vào RAG."
+-].join("\n");
+-
+-const MARKET_ANALYST_PROMPT = [
+-    "Nghiên cứu thị trường AI và phân tích đối thủ cạnh tranh:",
+-    "Intel-Analyst sẽ phân tích ưu điểm, nhược điểm của các giải pháp hiện tại để đề xuất cải tiến sản phẩm:",
+-    "- Advantage & Disadvantage Analysis: So sánh tính năng, ưu điểm, nhược điểm của các công cụ AI khác trên thị trường.",
+-    "- Product Optimization Proposal: Đề xuất các cải tiến cụ thể về giao diện, tính năng, và chi phí để làm sản phẩm của anh Hai tốt hơn.",
+-    "- Trend Forecasting: Dự báo xu hướng công nghệ mới để đón đầu thị trường Marketing SaaS SMB."
++const DEAN_PROMPT = [
++    "Thiết lập chuẩn mực học thuật và thẩm định tối cao:",
++    "Dean of Faculty (Chief Reasoning Authority) chịu trách nhiệm ban hành chuẩn lập luận và thực hiện quyền veto:",
++    "- Academic Standards: Quy định cấu trúc lập luận chuẩn khoa học, chặt chẽ.",
++    "- Veto Power: Bác bỏ lập luận nếu phát hiện lỗi logic hoặc thiếu bằng chứng.",
++    "- Policy Enforcement: Đảm bảo toàn bộ ban điều phối tuân thủ quy chế nghiên cứu khoa học."
++].join("\n");
++
++const DEPT_HEAD_PROMPT = [
++    "Điều phối nghiên cứu theo chuyên ngành:",
++    "Department Head (Manager) chịu trách nhiệm phân chia và phân phối các câu hỏi lập luận:",
++    "- Domain Routing: Định tuyến câu hỏi theo đúng chuyên ngành (Khoa học Máy tính / Tài chính / Kỹ thuật).",
++    "- Resource Allocation: Phân bổ nguồn lực tính toán và nhân sự cho các đề mục nghiên cứu.",
++    "- Output Consolidation: Tổng hợp các kết quả nghiên cứu độc lập để gửi lên Dean."
++].join("\n");
++
++const PEER_CHAIR_PROMPT = [
++    "Giám sát chất lượng bình duyệt học thuật:",
++    "Peer Review Chair (Supervisor) giám sát tính hợp lệ của lập luận trước khi xuất bản:",
++    "- Quality Gatekeeping: Đánh giá chất lượng thảo luận và lập luận tổng thể của toàn bộ network.",
++    "- Consensus Verification: Đảm bảo các luồng lập luận đạt được sự đồng thuận khoa học.",
++    "- Final Sign-off: Ký phê duyệt kết quả cuối cùng để gửi về cho Founder."
++].join("\n");
++
++const CURRICULUM_PLANNER_PROMPT = [
++    "Phân rã bài toán và thiết lập lộ trình lập luận:",
++    "Curriculum Planner (Planner) thiết lập kế hoạch giải quyết các câu hỏi phức tạp:",
++    "- Problem Decomposition: Phân rã câu hỏi lớn thành các câu hỏi phụ (sub-problems) độc lập.",
++    "- Dependency Mapping: Xác định mối liên hệ và thứ tự giải quyết tối ưu giữa các bài toán con.",
++    "- Curriculum Drafting: Viết lộ trình giải quyết chi tiết gửi TA Lead phân bổ."
++].join("\n");
++
++const TA_LEAD_PROMPT = [
++    "Điều phối các nhóm trợ giảng nghiên cứu:",
++    "Teaching Assistant Lead (Lead) chịu trách nhiệm giám sát các luồng lập luận song song:",
++    "- Instance Coordination: Quản lý và theo dõi tiến trình làm việc của 3 Research Fellows.",
++    "- Parallel Evaluation: Thu thập kết quả lập luận từ các hướng tiếp cận khác nhau để chuẩn bị cho bước self-consistency.",
++    "- Task Delegation: Giao chỉ thị phân rã chi tiết cho từng Fellow."
++].join("\n");
++
++const FELLOW_PROMPT_1 = [
++    "Nghiên cứu lập luận độc lập - Luồng 1 (Phương pháp Suy luận Logic):",
++    "Research Fellow 1 thực hiện phân tích sâu theo hướng tiếp cận diễn dịch và quy nạp:",
++    "- Logical Deduction: Suy luận từng bước một cách chặt chẽ từ giả thuyết ban đầu.",
++    "- Context Analysis: Đọc kỹ tài liệu thư viện để tránh mâu thuẫn với các nghiên cứu trước.",
++    "- Output Generation: Tạo ra một hướng giải quyết độc lập để so sánh chéo."
++].join("\n");
++
++const FELLOW_PROMPT_2 = [
++    "Nghiên cứu lập luận độc lập - Luồng 2 (Phương pháp Phân tích Thực nghiệm):",
++    "Research Fellow 2 thực hiện phân tích sâu theo hướng thực nghiệm và thống kê:",
++    "- Edge-case Evaluation: Tập trung khai phá các trường hợp biên hoặc ngoại lệ của bài toán.",
++    "- Output Generation: Tạo ra hướng đi thứ 2 để củng cố tính self-consistency."
++].join("\n");
++
++const FELLOW_PROMPT_3 = [
++    "Nghiên cứu lập luận độc lập - Luồng 3 (Phương pháp Đối chiếu Phản biện):",
++    "Research Fellow 3 thực hiện phân tích sâu theo hướng tiếp cận hoài nghi và phản biện:",
++    "- Adversarial Thinking: Đặt giả thuyết ngược lại để tìm kiếm điểm yếu trong bài toán.",
++    "- Alternative Solutions: Đề xuất các giải pháp thay thế tối ưu hơn về mặt cấu trúc.",
++    "- Output Generation: Tạo ra hướng đi thứ 3 để hoàn thiện tam giác lập luận."
++].join("\n");
++
++const GRADING_AGENT_PROMPT = [
++    "Chấm điểm lập luận và thẩm định logic (QC):",
++    "Grading Agent chấm điểm chất lượng lập luận của các Research Fellows:",
++    "- Logic Gap Detection: Phát hiện các lỗ hổng lập luận hoặc các bước nhảy cóc logic.",
++    "- Scoring Criteria: Chấm điểm dựa trên độ chính xác, tính đầy đủ và tính chặt chẽ.",
++    "- Rejection Feedback: Từ chối kết quả lập luận nếu điểm số dưới chuẩn, yêu cầu Fellows làm lại."
++].join("\n");
++
++const INTEGRITY_AUDITOR_PROMPT = [
++    "Kiểm định tính chính trực học thuật (Audit):",
++    "Academic Integrity Auditor rà soát chống ảo giác và thiên vị độc lập:",
++    "- Hallucination Audit: Đảm bảo không có các tuyên bố vô căn cứ hoặc thông tin giả mạo.",
++    "- Citation Verification: Đối chiếu tài liệu trích dẫn nguồn mở xem có hợp pháp và chính xác.",
++    "- Bias Elimination: Kiểm tra và loại bỏ các xu hướng thiên vị trong câu trả lời."
++].join("\n");
++
++const BLIND_CHECK_PROMPT = [
++    "Bảo mật thông tin bình duyệt (Security):",
++    "Peer Review Blind-check ngăn chặn tấn công và rò rỉ prompt gốc:",
++    "- Injection Blocker: Quét lọc dữ liệu đầu vào chống prompt injection và tấn công mã nguồn.",
++    "- Data Leak Guard: Ngăn chặn rò rỉ API Keys và DB credentials nhạy cảm.",
++    "- Blind Review Anonymization: Đảm bảo tính ẩn danh và an toàn tuyệt đối cho luồng dữ liệu."
++].join("\n");
++
++const HOURS_SCHEDULER_PROMPT = [
++    "Phân bổ tài nguyên nghiên cứu (Load Balancer):",
++    "Office Hours Scheduler điều phối tải cho các Research Fellows:",
++    "- Request Queueing: Nhận câu hỏi từ TA Lead và xếp vào hàng đợi tối ưu.",
++    "- Resource Allocation: Phân bổ câu hỏi cho Research Fellow đang rảnh rỗi.",
++    "- Latency Minimization: Đảm bảo tối thiểu hóa thời gian chờ đợi phản hồi của hệ thống."
++].join("\n");
++
++const RETRACTION_AGENT_PROMPT = [
++    "Khắc phục sự cố và đính chính kết quả (Error Recovery):",
++    "Retraction Agent thực hiện sửa đổi nếu phát hiện lỗi sau khi xuất bản:",
++    "- Post-publish Review: Giám sát phản hồi thực tế để phát hiện các lỗi lập luận bị bỏ sót.",
++    "- Self-Correction: Thực hiện sửa đổi, vá lỗi và đính chính ngay lập tức.",
++    "- Notification Dispatch: Phát đi thông báo đính chính chính thức tới toàn bộ hệ thống."
++].join("\n");
++
++const PUB_METRICS_PROMPT = [
++    "Thống kê hiệu suất xuất bản học thuật (Reporter):",
++    "Publication Metrics theo dõi các chỉ số vận hành và chất lượng:",
++    "- Accuracy Tracking: Ghi nhận tỷ lệ lập luận chuẩn xác của hệ thống.",
++    "- Latency & Resource Metrics: Đo lường thời gian phản hồi và chi phí API gọi mô hình.",
++    "- Domain Coverage: Đánh giá vùng kiến thức và mức độ tin cậy của các câu trả lời."
++].join("\n");
++
++const TA_ANNOUNCEMENT_PROMPT = [
++    "Truyền thông và công bố kết quả (Communication):",
++    "TA Announcement trả kết quả về cho các Supervisor gốc:",
++    "- Result Formatting: Biên soạn báo cáo lập luận học thuật thành ngôn ngữ dễ hiểu.",
++    "- Notification Routing: Định tuyến kết quả đến đúng Agent hoặc người dùng yêu cầu.",
++    "- Broadcast Logs: Xuất bản các cập nhật trạng thái lên bảng tin Redis."
++].join("\n");
++
++const FACULTY_LIBRARY_PROMPT = [
++    "Thư viện học thuật lưu trữ tri thức (Memory):",
++    "Faculty Library quản lý bộ nhớ lưu trữ tri thức cũ:",
++    "- Historical Retrieval: Tìm kiếm các lập luận tương tự trong quá khứ để tham chiếu.",
++    "- Inconsistency Prevention: Đảm bảo các kết luận mới không mâu thuẫn với kết luận cũ.",
++    "- Knowledge Archiving: Hệ thống hóa các bài học của Spy và RAG vào bộ nhớ dài hạn."
++].join("\n");
++
++const TENURE_COMMITTEE_PROMPT = [
++    "Hội đồng thẩm định và cải tiến chất lượng (Training):",
++    "Tenure Review Committee phân tích lỗi sai và đề xuất cải tiến prompt:",
++    "- Post-mortem Analysis: Đọc log các phiên chạy lỗi sandbox hoặc bị QC reject để tìm nguyên nhân gốc rễ.",
++    "- Prompt Optimization: Đề xuất cải tiến prompt cho các fellows và grader để nâng cấp chất lượng lập luận.",
++    "- Core Evolution Guide: Viết chỉ dẫn nâng cấp hệ thống vào AGENTS.md."
+ ].join("\n");
+ 
+ const DEFAULT_AGENTS = [
+-    { id: 'supervisor', name: 'Aether-Supervisor', role: 'Coordinator', prompt: SUPERVISOR_PROMPT, model: 'gemini-3.5-flash', color: 'amber', status: 'idle', cost: 0.0, avatar: 'SV', x: 250, y: 210 },
+-    { id: 'planner', name: 'Aether-Planner', role: 'Project Planner', prompt: 'Decompose high-level goals into concrete, structured step-by-step task lists, establish prioritization, and delegate instructions to technical sub-agents.', model: 'gemini-3.5-flash', color: 'amber', status: 'idle', cost: 0.0, avatar: 'PL', x: 273, y: 77 },
+-    { id: 'researcher', name: 'Web-Explorer', role: 'Code Researcher', prompt: 'Search the web, read api docs, and gather architectural recommendations.', model: 'gemini-2.0-flash', color: 'cyan', status: 'idle', cost: 0.0, avatar: 'RS', x: 183, y: 93 },
+-    { id: 'github_explorer', name: 'GitHub-Explorer', role: 'Open Source Analyst', prompt: 'Search GitHub repositories, analyze open-source code quality, evaluate licenses (MIT, Apache, GPL), verify security posture (issues, commits), and present open-source integration proposals to the CFO and Code-Architect.', model: 'gemini-2.0-flash', color: 'cyan', status: 'idle', cost: 0.0, avatar: 'GH', x: 123, y: 164 },
+-    { id: 'developer', name: 'Code-Architect', role: 'Full Stack Dev', prompt: DEVELOPER_PROMPT, model: 'aether-core-v4', color: 'purple', status: 'idle', cost: 0.0, avatar: 'DV', x: 123, y: 256 },
+-    { id: 'db_developer', name: 'DB-Architect', role: 'Database Engineer', prompt: 'Design optimized relational database schemas, write database seeding and migration scripts, and troubleshoot SQL errors.', model: 'gemini-3.5-flash', color: 'emerald', status: 'idle', cost: 0.0, avatar: 'DB', x: 183, y: 327 },
+-    { id: 'cfo', name: 'Prof-CFO', role: 'Chief Financial Officer (Harvard CS Prof)', prompt: CFO_PROMPT, model: 'gemini-3.5-flash', color: 'amber', status: 'idle', cost: 0.0, avatar: 'CF', x: 273, y: 343 },
+-    { id: 'devops', name: 'Aether-DevOps', role: 'DevOps Engineer', prompt: 'Configure CI/CD pipelines, write Dockerfiles and deployment scripts, manage environment variables, and verify production deployment status.', model: 'gemini-3.5-flash', color: 'red', status: 'idle', cost: 0.0, avatar: 'DO', x: 353, y: 297 },
+-    { id: 'senior_developer', name: 'Senior-Coder', role: 'Senior Developer', prompt: 'Write highly optimized, clean, and well-structured source code, install dependencies, and run validation scripts.', model: 'gemini-3.5-flash', color: 'purple', status: 'idle', cost: 0.0, avatar: 'SR', x: 385, y: 210 },
++    { id: 'supervisor', name: 'Peer-Review-Chair', role: 'Supervisor', prompt: PEER_CHAIR_PROMPT, model: 'gemini-3.5-flash', color: 'amber', status: 'idle', cost: 0.0, avatar: 'PR', x: 250, y: 210 },
++    { id: 'dean', name: 'Dean-of-Faculty', role: 'CTO', prompt: DEAN_PROMPT, model: 'gemini-3.5-flash', color: 'amber', status: 'idle', cost: 0.0, avatar: 'DF', x: 273, y: 77 },
++    { id: 'dept_head', name: 'Department-Head', role: 'Manager', prompt: DEPT_HEAD_PROMPT, model: 'gemini-3.5-flash', color: 'amber', status: 'idle', cost: 0.0, avatar: 'DH', x: 183, y: 93 },
++    { id: 'planner', name: 'Curriculum-Planner', role: 'Planner', prompt: CURRICULUM_PLANNER_PROMPT, model: 'gemini-3.5-flash', color: 'cyan', status: 'idle', cost: 0.0, avatar: 'CP', x: 123, y: 164 },
++    { id: 'ta_lead', name: 'TA-Lead', role: 'Lead', prompt: TA_LEAD_PROMPT, model: 'gemini-2.0-flash', color: 'cyan', status: 'idle', cost: 0.0, avatar: 'TL', x: 123, y: 256 },
++    { id: 'developer', name: 'Research-Fellow-1', role: 'Assembly 1', prompt: FELLOW_PROMPT_1, model: 'aether-core-v4', color: 'purple', status: 'idle', cost: 0.0, avatar: 'F1', x: 183, y: 327 },
++    { id: 'senior_developer', name: 'Research-Fellow-2', role: 'Assembly 2', prompt: FELLOW_PROMPT_2, model: 'gemini-3.5-flash', color: 'purple', status: 'idle', cost: 0.0, avatar: 'F2', x: 273, y: 343 },
++    { id: 'market_analyst', name: 'Research-Fellow-3', role: 'Assembly 3', prompt: FELLOW_PROMPT_3, model: 'gemini-2.0-flash', color: 'purple', status: 'idle', cost: 0.0, avatar: 'F3', x: 353, y: 297 },
++    { id: 'reviewer', name: 'Grading-Agent', role: 'QC', prompt: GRADING_AGENT_PROMPT, model: 'gemini-3.5-flash', color: 'emerald', status: 'idle', cost: 0.0, avatar: 'GA', x: 385, y: 210 },
++    { id: 'integrity_auditor', name: 'Academic-Integrity-Auditor', role: 'Audit', prompt: INTEGRITY_AUDITOR_PROMPT, model: 'gemini-3.5-flash', color: 'emerald', status: 'idle', cost: 0.0, avatar: 'AA', x: 353, y: 123 },
++    { id: 'spy', name: 'Peer-Review-Blind-check', role: 'Security', prompt: BLIND_CHECK_PROMPT, model: 'gemini-2.0-flash', color: 'red', status: 'idle', cost: 0.0, avatar: 'BC', x: 250, y: 360 },
++    { id: 'hours_scheduler', name: 'Office-Hours-Scheduler', role: 'Load Balancer', prompt: HOURS_SCHEDULER_PROMPT, model: 'gemini-2.0-flash', color: 'cyan', status: 'idle', cost: 0.0, avatar: 'OH', x: 200, y: 380 },
++    { id: 'retraction_agent', name: 'Retraction-Agent', role: 'Error Recovery', prompt: RETRACTION_AGENT_PROMPT, model: 'gemini-2.0-flash', color: 'red', status: 'idle', cost: 0.0, avatar: 'RA', x: 150, y: 380 },
++    { id: 'pub_metrics', name: 'Publication-Metrics', role: 'Reporter', prompt: PUB_METRICS_PROMPT, model: 'gemini-2.0-flash', color: 'blue', status: 'idle', cost: 0.0, avatar: 'PM', x: 100, y: 380 },
++    { id: 'ta_announcement', name: 'TA-Announcement', role: 'Communication', prompt: TA_ANNOUNCEMENT_PROMPT, model: 'gemini-2.0-flash', color: 'blue', status: 'idle', cost: 0.0, avatar: 'TA', x: 50, y: 380 },
++    { id: 'faculty_library', name: 'Faculty-Library', role: 'Memory', prompt: FACULTY_LIBRARY_PROMPT, model: 'gemini-2.0-flash', color: 'blue', status: 'idle', cost: 0.0, avatar: 'FL', x: 250, y: 220 },
++    { id: 'tenure_committee', name: 'Tenure-Review-Committee', role: 'Training', prompt: TENURE_COMMITTEE_PROMPT, model: 'gemini-2.0-flash', color: 'blue', status: 'idle', cost: 0.0, avatar: 'TC', x: 250, y: 220 }
++];-flash', color: 'purple', status: 'idle', cost: 0.0, avatar: 'SR', x: 385, y: 210 },
+     { id: 'reviewer', name: 'Sentinel-Auditor', role: 'QA & Security', prompt: REVIEWER_PROMPT, model: 'gemini-3.5-flash', color: 'emerald', status: 'idle', cost: 0.0, avatar: 'QA', x: 353, y: 123 },
+     { id: 'spy', name: 'Aether-Spy', role: 'Gateway Intelligence', prompt: SPY_PROMPT, model: 'gemini-2.0-flash', color: 'cyan', status: 'idle', cost: 0.0, avatar: 'SP', x: 250, y: 360 },
+     { id: 'market_analyst', name: 'Intel-Analyst', role: 'AI Market Researcher', prompt: MARKET_ANALYST_PROMPT, model: 'gemini-2.0-flash', color: 'emerald', status: 'idle', cost: 0.0, avatar: 'MA', x: 200, y: 380 }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

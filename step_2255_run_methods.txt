@@ -1,0 +1,109 @@
+Created At: 2026-07-19T12:21:47Z
+Completed At: 2026-07-19T12:21:47Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 1502
+Total Bytes: 83164
+Showing lines 1250 to 1350
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1250: 
+1251:             await self.websocket.send_json({"type": "task_progress", "progress": 100})
+1252:             await self.websocket.send_json({"type": "finished"})
+1253: 
+1254:         except Exception as e:
+1255:             print(f"Scenario running error: {e}")
+1256: 
+1257:     async def run_mock_scenario_sequence(self, scenario_key, agents_seq):
+1258:         """Simulated kịch bản sequence for Academic Reasoning Faculty."""
+1259:         # Find agents by ID to map correctly
+1260:         peer_chair = next((a for a in agents_seq if a["id"] == "supervisor"), agents_seq[0])
+1261:         dean = next((a for a in agents_seq if a["id"] == "dean"), agents_seq[1] if len(agents_seq) > 1 else peer_chair)
+1262:         dept_head = next((a for a in agents_seq if a["id"] == "dept_head"), agents_seq[2] if len(agents_seq) > 2 else peer_chair)
+1263:         planner = next((a for a in agents_seq if a["id"] == "planner"), agents_seq[3] if len(agents_seq) > 3 else peer_chair)
+1264:         ta_lead = next((a for a in agents_seq if a["id"] == "ta_lead"), agents_seq[4] if len(agents_seq) > 4 else peer_chair)
+1265:         fellow_1 = next((a for a in agents_seq if a["id"] == "developer"), agents_seq[5] if len(agents_seq) > 5 else peer_chair)
+1266:         grading_agent = next((a for a in agents_seq if a["id"] == "reviewer"), agents_seq[8] if len(agents_seq) > 8 else peer_chair)
+1267:         ta_announcement = next((a for a in agents_seq if a["id"] == "ta_announcement"), agents_seq[14] if len(agents_seq) > 14 else peer_chair)
+1268: 
+1269:         # Step 1: Department-Head routes domain
+1270:         await self.websocket.send_json({"type": "task_progress", "progress": 10})
+1271:         res = await self.execute_agent_loop(
+1272:             dept_head, 
+1273:             f"Assigning domain specialists for target: '{scenario_key}'. Trigger routing rules.", 
+1274:             "Domain routing triggered."
+1275:         )
+1276:         
+1277:         # Step 2: Curriculum-Planner decomposes the problem
+1278:         await self.websocket.send_json({"type": "task_progress", "progress": 25})
+1279:         await self.websocket.send_json({"type": "delegate_animation", "from": dept_head["id"], "to": planner["id"], "content": "Decompose task and write reasoning_plan.md."})
+1280:         
+1281:         plan_content = f"""# Academic Reasoning Plan: {scenario_key}
+1282: - [x] Sub-task 1: Parse logical constraints and core axioms (Assignee: Research-Fellow-1)
+1283: - [ ] Sub-task 2: Perform empirical verification (Assignee: Research-Fellow-2)
+1284: - [ ] Sub-task 3: Cross-check logical gaps and cite references (Assignee: Grading-Agent)
+1285: """
+1286:         res = await self.run_tool(
+1287:             planner["id"], 
+1288:             "write_file", 
+1289:             json.dumps({"filename": "reasoning_plan.md", "content": plan_content})
+1290:         )
+1291:         await self.send_log(planner["id"], "observation", res)
+1292:         res = await self.execute_agent_loop(planner, "Construct reasoning steps and dependencies.", "Planning")
+1293:         
+1294:         # Step 3: TA-Lead coordinates instances
+1295:         await self.websocket.send_json({"type": "task_progress", "progress": 45})
+1296:         await self.websocket.send_json({"type": "delegate_animation", "from": planner["id"], "to": ta_lead["id"], "content": "Delegate tasks to Research Fellows."})
+1297:         res = await self.execute_agent_loop(
+1298:             ta_lead,
+1299:             "Delegate Sub-task 1 to Research-Fellow-1. Coordinate multi-agent logic flow.",
+1300:             "Coordination."
+1301:         )
+1302:         
+1303:         # Step 4: Research-Fellow-1 solves logic
+1304:         await self.websocket.send_json({"type": "task_progress", "progress": 65})
+1305:         await self.websocket.send_json({"type": "delegate_animation", "from": ta_lead["id"], "to": fellow_1["id"], "content": "Generate logical proof paths."})
+1306:         proof_content = f"""=====================================
+1307:         ACADEMIC REASONING PROOF PATH
+1308: =====================================
+1309: TARGET: {scenario_key}
+1310: AXIOM A: Logical consistency is required.
+1311: AXIOM B: RAG Memory must be checked.
+1312: THEOREM: Verified. All agents are functioning optimally.
+1313: STATUS: LOGIC PATH 1 COMPLETE
+1314: ====================================="""
+1315:         res = await self.run_tool(
+1316:             fellow_1["id"], 
+1317:             "write_file", 
+1318:             json.dumps({"filename": "reasoning_path_1.txt", "content": proof_content})
+1319:         )
+1320:         await self.send_log(fellow_1["id"], "observation", res)
+1321:         res = await self.execute_agent_loop(fellow_1, "Formulate deduction logic and write findings.", "Logic verification.")
+1322:         
+1323:         # Step 5: Grading Agent reviews
+1324:         await self.websocket.send_json({"type": "task_progress", "progress": 80})
+1325:         await self.websocket.send_json({"type": "delegate_animation", "from": fellow_1["id"], "to": grading_agent["id"], "content": "Audit proof paths for logic gaps."})
+1326:         res = await self.execute_agent_loop(
+1327:             grading_agent,
+1328:             "Review reasoning_path_1.txt for correctness. Score the logic validity.",
+1329:             "Logic Audit."
+1330:         )
+1331:         
+1332:         # Step 6: Dean final review
+1333:         await self.websocket.send_json({"type": "task_progress", "progress": 95})
+1334:         await self.websocket.send_json({"type": "delegate_animation", "from": grading_agent["id"], "to": dean["id"], "content": "Final approval and academic sign-off."})
+1335:         res = await self.execute_agent_loop(
+1336:             dean,
+1337:             "Review peer grading scores. Perform academic sign-off and grant publication rights.",
+1338:             "Dean Sign-off."
+1339:         )
+1340:         
+1341:         # Step 7: TA Announcement publishes report
+1342:         await self.websocket.send_json({"type": "task_progress", "progress": 100})
+1343:         await self.websocket.send_json({"type": "delegate_animation", "from": dean["id"], "to": ta_announcement["id"], "content": "Publish final report."})
+1344:         
+1345:         report_content = f"""=====================================
+1346:          FINAL REASONING REPORT
+1347: =====================================
+1348: Goal: {scenario_key}
+1349: Verdict: APPROVED BY DEAN
+1350: Status: Successful run.
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

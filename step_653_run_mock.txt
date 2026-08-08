@@ -1,0 +1,43 @@
+Created At: 2026-07-19T01:14:02Z
+Completed At: 2026-07-19T01:14:02Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 699
+Total Bytes: 36579
+Showing lines 506 to 540
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+506:                     # 2. DIRECT FILE/COMMAND TOOL RUNS
+507:                     else:
+508:                         await self.websocket.send_json({"type": "agent_status", "agent": supervisor["id"], "status": "acting"})
+509:                         obs = await self.run_tool(supervisor["id"], action, args)
+510:                         await self.send_log(supervisor["id"], "observation", obs)
+511:                         context_history += f"\nThought: {thought}\nAction: {action}({args})\nObservation: {obs}"
+512: 
+513:                     # Update progress bar
+514:                     await self.websocket.send_json({"type": "task_progress", "progress": min(95, 10 + turns * 12)})
+515:                     await asyncio.sleep(4) # Cooldown between steps to respect rate limits
+516: 
+517:                 except Exception as e:
+518:                     err_msg = f"Orchestrator error: {str(e)}"
+519:                     if "429" in str(e) or "quota" in str(e).lower() or "limit" in str(e).lower():
+520:                         obs = "[WARNING] API Key rate-limit exceeded. Switching to simulated mock mode to complete this run..."
+521:                         await self.send_log(supervisor["id"], "observation", obs)
+522:                         await self.run_mock_scenario_sequence(scenario_key, agents_seq)
+523:                         return
+524:                     await self.send_log(supervisor["id"], "observation", err_msg)
+525:                     break
+526:             
+527:             await self.websocket.send_json({"type": "task_progress", "progress": 100})
+528:             await self.websocket.send_json({"type": "finished"})
+529: 
+530:         except Exception as e:
+531:             print(f"Scenario running error: {e}")
+532: 
+533:     async def run_mock_scenario_sequence(self, scenario_key, agents_seq):
+534:         """Simulated kịch bản sequence for dry-run."""
+535:         if scenario_key == "receptionist":
+536:             # Step 1: Receptionist greets visitor
+537:             await self.websocket.send_json({"type": "task_progress", "progress": 10})
+538:             res = await self.execute_agent_loop(
+539:                 agents_seq[0], 
+540:                 "Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Tell Schedule-Manager to inspect calendar.json for availability.", 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

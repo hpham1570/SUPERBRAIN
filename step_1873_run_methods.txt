@@ -1,0 +1,48 @@
+Created At: 2026-07-19T11:48:07Z
+Completed At: 2026-07-19T11:48:07Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 1458
+Total Bytes: 84777
+Showing lines 1220 to 1259
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1220:                         print(f"Successfully learned new lesson: {lesson_obj['lesson']}")
+1221:                         await self.websocket.send_json({
+1222:                             "type": "log",
+1223:                             "agent": None,
+1224:                             "logType": "system",
+1225:                             "content": f"> [LEARNED LESSON] {lesson_obj['lesson']}"
+1226:                         })
+1227:             except Exception as le:
+1228:                 print(f"Learning loop skipped or failed: {le}")
+1229: 
+1230:             await self.websocket.send_json({"type": "task_progress", "progress": 100})
+1231:             await self.websocket.send_json({"type": "finished"})
+1232: 
+1233:         except Exception as e:
+1234:             print(f"Scenario running error: {e}")
+1235: 
+1236:     async def run_mock_scenario_sequence(self, scenario_key, agents_seq):
+1237:         """Simulated kịch bản sequence for dry-run."""
+1238:         if scenario_key == "receptionist":
+1239:             # Step 1: Receptionist greets visitor
+1240:             await self.websocket.send_json({"type": "task_progress", "progress": 10})
+1241:             res = await self.execute_agent_loop(
+1242:                 agents_seq[0], 
+1243:                 "Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Tell Schedule-Manager to inspect calendar.json for availability.", 
+1244:                 "Workspace initialized with calendar.json."
+1245:             )
+1246:             
+1247:             # Step 2: Schedule-Manager checks availability
+1248:             await self.websocket.send_json({"type": "task_progress", "progress": 30})
+1249:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Check calendar.json for 14:00 CEO meeting."})
+1250:             res = await self.execute_agent_loop(
+1251:                 agents_seq[1], 
+1252:                 "Read calendar.json to check if 14:00 is open. Report back to Receptionist. If closed, mention 15:00 is open.", 
+1253:                 "Lobby coordinates."
+1254:             )
+1255:             
+1256:             # Step 3: Receptionist coordinates scheduling update
+1257:             await self.websocket.send_json({"type": "task_progress", "progress": 50})
+1258:             await self.websocket.send_json({"type": "delegate_animation", "from": "researcher", "to": "supervisor", "content": "Report 14:00 conflict. Suggest 15:00."})
+1259:             res = await self.execute_agent_loop(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

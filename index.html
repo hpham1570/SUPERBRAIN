@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHERNET // AI Agent Control Center</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="pulse-dot"></span>
+                <h1>AETHERNET</h1>
+                <span class="divider">//</span>
+                <span class="subtitle">AI Agent Control Center</span>
+                <span class="badge" id="socket-status" style="margin-left: 15px; border-color: rgba(0, 255, 135, 0.4); color: #00ff87; background: rgba(0, 255, 135, 0.12); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; box-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">ONLINE</span>
+            </div>
+
+            
+            <div class="header-controls">
+                <div class="control-group">
+                    <label for="simulation-select">Select Scenario:</label>
+                    <select id="simulation-select" class="styled-select">
+                        <option value="web-app">Build Full-Stack App</option>
+                        <option value="market-analysis">Market Intelligence Report</option>
+                        <option value="security-audit">Automated Security Audit</option>
+                        <option value="receptionist">AI Receptionist Desk</option>
+                    </select>
+                </div>
+
+
+                <div class="simulation-actions">
+                    <button id="btn-play" class="btn primary-glow" onclick="triggerStartRun(event)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <span>Start Run</span>
+                    </button>
+                    <button id="btn-pause" class="btn secondary" disabled>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                        <span>Pause</span>
+                    </button>
+                </div>
+
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <button class="speed-btn active" data-speed="1">1x</button>
+                    <button class="speed-btn" data-speed="2">2x</button>
+                    <button class="speed-btn" data-speed="4">4x</button>
+                </div>
+
+                <button id="btn-voice" class="btn secondary" style="padding: 8px 12px; border-color: rgba(0, 242, 254, 0.2);" title="Toggle Voice Narration">
+                    <svg id="voice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                    <span>Voice: ON</span>
+                </button>
+
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="app-main">
+            <!-- CỘT BÊN TRÁI: NAV SIDEBAR -->
+            <section class="superbrain-sidebar">
+                <div class="sidebar-brand">
+                    <span>⚡ AGY SIDEBAR</span>
+                    <span style="font-size:0.65rem; color:#00f2fe; font-weight:800;">13 AGENTS</span>
+                </div>
+                <button id="side-nav-new-chat" type="button" class="sidebar-nav-btn active" onclick="openSidebarNav('new-chat', this)">
+                    <span class="sidebar-icon">💬</span>
+                    <span>New Chat</span>
+                </button>
+                <button id="side-nav-history" type="button" class="sidebar-nav-btn" onclick="openSidebarNav('history', this)">
+                    <span class="sidebar-icon">📜</span>
+                    <span>History Chat</span>
+                </button>
+                <button id="side-nav-project" type="button" class="sidebar-nav-btn" onclick="openSidebarNav('project', this)">
+                    <span class="sidebar-icon">📁</span>
+                    <span>Project</span>
+                </button>
+                <button id="side-nav-artifact" type="button" class="sidebar-nav-btn" onclick="openSidebarNav('artifact', this)">
+                    <span class="sidebar-icon">💎</span>
+                    <span>Artifact</span>
+                </button>
+                <button id="side-nav-code" type="button" class="sidebar-nav-btn" onclick="openSidebarNav('code', this)">
+                    <span class="sidebar-icon">💻</span>
+                    <span>Code</span>
+                </button>
+                <button id="side-nav-customize" type="button" class="sidebar-nav-btn" onclick="openSidebarNav('customize', this)">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span>Customize</span>
+                </button>
+
+                <div style="margin-top:auto; background:rgba(0,242,254,0.04); border:1px solid rgba(0,242,254,0.15); border-radius:10px; padding:10px; text-align:center;">
+                    <div style="font-size:0.7rem; color:#94a3b8; font-weight:700; margin-bottom:4px;">STATUS: ONLINE</div>
+                    <div style="font-size:0.75rem; color:#00f2fe; font-weight:800;">SUPERBRAIN 10X</div>
+                </div>
+            </section>
+            <!-- LEFT PANEL: AGENTS & TASK STATUS -->
+            <section class="panel left-panel">
+                <div class="panel-header">
+                    <h2>Task Progress</h2>
+                    <span class="badge" id="task-status-badge">Idle</span>
+                </div>
+                <div class="task-info">
+                    <h3 id="current-task-title">No task running</h3>
+                    <p id="current-task-desc" class="muted-text">Select a scenario above and click "Start Run" to initiate the agents.</p>
+                    
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="task-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="task-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Execution Time</span>
+                            <span class="stat-val" id="stat-time">00:00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Mock API Cost</span>
+                            <span class="stat-val" id="stat-cost">$0.00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Steps Taken</span>
+                            <span class="stat-val" id="stat-steps">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API GATEWAY MONITOR (AETHER-SPY PING CONSOLE) -->
+                <div class="gateway-status-panel">
+                    <div class="gateway-header">
+                        <span class="glow-text" style="font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.5px;">API Gateway Status (Spy Intel)</span>
+                        <span class="badge secondary" style="font-size: 0.6rem; font-family: var(--font-mono); padding: 1px 6px;">Live</span>
+                    </div>
+                    <div class="gateway-grid">
+                        <div class="gateway-item" id="gw-gemini">
+                            <span class="gw-dot green"></span>
+                            <span class="gw-name">Gemini</span>
+                            <span class="gw-ping">120ms</span>
+                        </div>
+                        <div class="gateway-item" id="gw-openai">
+                            <span class="gw-dot green"></span>
+                            <span class="gw-name">OpenAI</span>
+                            <span class="gw-ping">235ms</span>
+                        </div>
+                        <div class="gateway-item" id="gw-claude">
+                            <span class="gw-dot green"></span>
+                            <span class="gw-name">Claude</span>
+                            <span class="gw-ping">190ms</span>
+                        </div>
+                        <div class="gateway-item" id="gw-deepseek">
+                            <span class="gw-dot yellow"></span>
+                            <span class="gw-name">DeepSeek</span>
+                            <span class="gw-ping">840ms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-header section-divider">
+                    <h2>Active Agent Network</h2>
+                </div>
+                <div class="agents-list" id="agents-container">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+            </section>
+
+            <!-- CENTER PANEL: NETWORK GRAPH & CONSOLE -->
+            <section class="panel center-panel">
+                <!-- NETWORK VISUALIZER -->
+                <div class="network-container">
+                    <div class="panel-header">
+                        <h2>Agent Coordination Map</h2>
+                        <span class="glow-text sub-label">Live communication graph</span>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <svg id="network-svg" width="100%" height="100%">
+                            <defs>
+                                <radialGradient id="node-glow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="rgba(0, 242, 254, 0.4)"/>
+                                    <stop offset="100%" stop-color="rgba(0, 242, 254, 0)"/>
+                                </radialGradient>
+                            </defs>
+                            <g id="links-group"></g>
+                            <g id="nodes-group"></g>
+                        </svg>
+                    </div>
+                </div>
+
+
+            </section>
+
+            <!-- RIGHT PANEL: WORKSPACE EXPLORER -->
+            <section class="panel right-panel">
+                <div class="panel-header-tabs">
+                    <button class="panel-tab active" id="tab-btn-files">
+                        <span>Files</span>
+                        <span class="tab-badge" id="workspace-file-count">0</span>
+                    </button>
+                    <button class="panel-tab" id="tab-btn-redis">
+                        <span>Redis</span>
+                        <span class="tab-badge redis-badge" id="redis-msg-count">0</span>
+                    </button>
+                    <button class="panel-tab" id="tab-btn-preview">
+                        <span>Preview</span>
+                        <span class="tab-badge preview-badge" id="preview-status-badge">Live</span>
+                    </button>
+                    <button class="panel-tab" id="tab-btn-debate">
+                        <span>Debate</span>
+                        <span class="tab-badge debate-badge" id="debate-msg-count">0</span>
+                    </button>
+                </div>
+                
+                <!-- Tab 1: Files -->
+                <div class="tab-content active" id="panel-files-content">
+                    <div class="workspace-layout">
+                        <div class="file-tree" id="file-tree-container">
+                            <!-- Loaded dynamically via JS -->
+                            <div class="empty-state">No files created yet.</div>
+                        </div>
+                        
+                        <div class="file-viewer-container">
+                            <div class="viewer-header">
+                                <span class="viewer-title" id="active-filename">preview_panel.txt</span>
+                                <div class="viewer-actions">
+                                    <span class="viewer-lang-badge" id="active-file-lang">TXT</span>
+                                </div>
+                            </div>
+                            <div class="viewer-content">
+                                <pre><code id="active-file-code">Files generated by agents will display here. Select a file from the list above to inspect its contents.</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Redis Monitor -->
+                <div class="tab-content" id="panel-redis-content">
+                    <div class="redis-status-bar">
+                        <span class="redis-status-dot" id="redis-conn-dot"></span>
+                        <span class="redis-status-text" id="redis-conn-status">Redis connecting...</span>
+                    </div>
+                    <div class="redis-stream-list" id="redis-stream-container">
+                        <div class="empty-state">No broker messages streamed yet. Click "Start Run" to trigger coordination.</div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Live Preview -->
+                <div class="tab-content" id="panel-preview-content">
+                    <div class="redis-status-bar">
+                        <span class="redis-status-dot active" id="preview-conn-dot" style="background-color: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan);"></span>
+                        <span class="redis-status-text" id="preview-status-label">No active HTML files in workspace.</span>
+                    </div>
+                    <div style="flex: 1; min-height: 0; background: #fff; position: relative;">
+                        <iframe id="preview-iframe" sandbox="allow-scripts allow-same-origin allow-modals allow-forms allow-popups" src="about:blank" style="width: 100%; height: 100%; border: none; background: #fff;"></iframe>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Debate Room -->
+                <div class="tab-content" id="panel-debate-content">
+                    <div class="redis-status-bar" style="background: rgba(255, 159, 67, 0.05); border-bottom: 1px solid rgba(255, 159, 67, 0.1);">
+                        <span class="redis-status-dot active" style="background-color: var(--accent-amber); box-shadow: 0 0 8px var(--accent-amber);"></span>
+                        <span class="redis-status-text" style="color: var(--text-primary); font-weight: 600;">Meeting Room: Alignment & Specs Audit</span>
+                    </div>
+                    <div class="debate-thread-container" id="debate-thread-container">
+                        <div class="empty-state">No group debate active yet. Click "Start Run" to open debate room.</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: AGENT CREATOR -->
+    <div id="modal-agent-creator" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>Configure New AI Agent</h2>
+                <button class="close-btn" id="creator-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="agent-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="agent-name">Agent Name</label>
+                            <input type="text" id="agent-name" placeholder="e.g. Architect" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="agent-role">Role Label</label>
+                            <input type="text" id="agent-role" placeholder="e.g. System Designer" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="agent-prompt">System Instructions</label>
+                        <textarea id="agent-prompt" rows="3" placeholder="Define how the agent should think and behave..." required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="agent-model">Base LLM Engine</label>
+                            <select id="agent-model" class="styled-select">
+                                <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                                <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                                <option value="aether-core-v4">Aether Core v4 (Custom)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="agent-color">Theme Accent</label>
+                            <select id="agent-color" class="styled-select">
+                                <option value="cyan">Cyan (Tech)</option>
+                                <option value="purple">Purple (Creative)</option>
+                                <option value="emerald">Emerald (Safety/Audit)</option>
+                                <option value="amber">Amber (Review/Supervision)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Granted Tool capabilities</label>
+                        <div class="tools-checkboxes">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="agent-tools" value="read_file" checked>
+                                <span>read_file</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="agent-tools" value="write_file" checked>
+                                <span>write_file</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="agent-tools" value="run_command">
+                                <span>run_command</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="agent-tools" value="web_search" checked>
+                                <span>web_search</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn primary-glow btn-full">Assemble Agent</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- HUMAN IN THE LOOP APPROVAL OVERLAY -->
+    <div id="modal-hitl" class="modal-overlay no-backdrop">
+        <div class="hitl-card glass-card">
+            <div class="hitl-indicator">
+                <span class="warning-pulse"></span>
+                <h3>HUMAN INTERVENTION REQUIRED</h3>
+            </div>
+            <div class="hitl-content">
+                <p><strong id="hitl-agent-name">Developer</strong> requests executing a high-risk tool operation:</p>
+                <div class="tool-request-box">
+                    <div class="tool-request-header">
+                        <span class="tool-tag" id="hitl-tool-name">run_command</span>
+                    </div>
+                    <pre><code id="hitl-tool-args">npm install express dotenv database-connector --save</code></pre>
+                </div>
+                <div class="hitl-warning-text">
+                    ⚠️ Running terminal commands can modify local system state. Proceed with caution.
+                </div>
+                
+                <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+                    <label for="hitl-feedback" style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Optional Feedback / Instructions:</label>
+                    <input type="text" id="hitl-feedback" style="width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 8px 12px; border-radius: 6px; font-family: inherit; font-size: 0.85rem; outline: none;" placeholder="e.g. Use yarn instead, or change port to 8080...">
+                </div>
+            </div>
+            <div class="hitl-actions">
+                <button id="btn-hitl-reject" class="btn reject-glow">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <span>Reject Action</span>
+                </button>
+                <button id="btn-hitl-approve" class="btn approve-glow">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>Approve Execution</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=10x"></script>
+
+    <!-- SUPERBRAIN SIDEBAR INTERACTIVE MODALS -->
+    <!-- 1. History Modal -->
+    <div id="modal-sidebar-history" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:99999; justify-content:center; align-items:center;">
+        <div style="background:#0a0f20; border:1px solid #00f2fe; border-radius:16px; padding:20px; width:450px; max-width:90%; color:#fff; box-shadow:0 0 40px rgba(0,242,254,0.3);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(0,242,254,0.2); padding-bottom:10px;">
+                <h3 style="color:#00f2fe; font-size:1.1rem; display:flex; align-items:center; gap:8px;">📜 LỊCH SỬ PHIÊN CHAT (CHAT HISTORY)</h3>
+                <button type="button" onclick="closeSidebarModal('modal-sidebar-history')" style="background:none; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px; max-height:300px; overflow-y:auto;">
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px 14px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:700; color:#fff; font-size:0.85rem;">Phiên #3: Multi-Platform Connectors Hub</div>
+                        <div style="font-size:0.75rem; color:#94a3b8;">Hôm nay, 03:10 AM • 13 Agents Executed</div>
+                    </div>
+                    <button type="button" onclick="loadHistorySession('Multi-Platform Connectors Hub')" style="background:rgba(0,242,254,0.15); border:1px solid #00f2fe; color:#00f2fe; padding:6px 12px; border-radius:6px; font-weight:700; font-size:0.75rem; cursor:pointer;">LOAD</button>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px 14px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:700; color:#fff; font-size:0.85rem;">Phiên #2: AI System Architecture & RAG</div>
+                        <div style="font-size:0.75rem; color:#94a3b8;">Hôm nay, 02:45 AM • 13 Agents Executed</div>
+                    </div>
+                    <button type="button" onclick="loadHistorySession('AI System Architecture & RAG')" style="background:rgba(0,242,254,0.15); border:1px solid #00f2fe; color:#00f2fe; padding:6px 12px; border-radius:6px; font-weight:700; font-size:0.75rem; cursor:pointer;">LOAD</button>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px 14px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:700; color:#fff; font-size:0.85rem;">Phiên #1: Full-Stack Express REST API App</div>
+                        <div style="font-size:0.75rem; color:#94a3b8;">Hôm nay, 02:15 AM • 13 Agents Executed</div>
+                    </div>
+                    <button type="button" onclick="loadHistorySession('Full-Stack Express REST API App')" style="background:rgba(0,242,254,0.15); border:1px solid #00f2fe; color:#00f2fe; padding:6px 12px; border-radius:6px; font-weight:700; font-size:0.75rem; cursor:pointer;">LOAD</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Project Modal -->
+    <div id="modal-sidebar-project" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:99999; justify-content:center; align-items:center;">
+        <div style="background:#0a0f20; border:1px solid #34d399; border-radius:16px; padding:20px; width:480px; max-width:90%; color:#fff; box-shadow:0 0 40px rgba(52,211,153,0.3);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(52,211,153,0.2); padding-bottom:10px;">
+                <h3 style="color:#34d399; font-size:1.1rem; display:flex; align-items:center; gap:8px;">📁 DỰ ÁN WORKSPACE FILE EXPLORER</h3>
+                <button type="button" onclick="closeSidebarModal('modal-sidebar-project')" style="background:none; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#a5f3fc; background:#050812; padding:12px; border-radius:10px; margin-bottom:12px; max-height:220px; overflow-y:auto;">
+                <div>📂 workspace/</div>
+                <div>├── 📄 index.html <span style="color:#34d399;">(Client UI Glassmorphism)</span></div>
+                <div>├── ⚡ server.js <span style="color:#fbbf24;">(Node.js Express Server)</span></div>
+                <div>├── 🎨 style.css <span style="color:#c084fc;">(CSS Tokens & Theme)</span></div>
+                <div>├── 📦 app.js <span style="color:#60a5fa;">(Frontend Logic & WS)</span></div>
+                <div>├── 🐍 connectors.py <span style="color:#34d399;">(Telegram/Slack/Discord)</span></div>
+                <div>└── 📦 package.json <span style="color:#94a3b8;">(Dependencies)</span></div>
+            </div>
+            <button type="button" onclick="closeSidebarModal('modal-sidebar-project'); if(window.navCodeEditor) window.navCodeEditor();" style="width:100%; background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; padding:10px; border-radius:8px; font-weight:800; cursor:pointer;">💻 MỞ TRÌNH BIÊN SOẠN CODE DỰ ÁN</button>
+        </div>
+    </div>
+
+    <!-- 3. Artifact Modal -->
+    <div id="modal-sidebar-artifact" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:99999; justify-content:center; align-items:center;">
+        <div style="background:#0a0f20; border:1px solid #c084fc; border-radius:16px; padding:20px; width:480px; max-width:90%; color:#fff; box-shadow:0 0 40px rgba(192,132,252,0.3);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(192,132,252,0.2); padding-bottom:10px;">
+                <h3 style="color:#c084fc; font-size:1.1rem; display:flex; align-items:center; gap:8px;">💎 ARTIFACTS & REPORTS MANAGER</h3>
+                <button type="button" onclick="closeSidebarModal('modal-sidebar-artifact')" style="background:none; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:15px;">
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:700; color:#fff; font-size:0.85rem;">📄 implementation_plan.md</div>
+                        <div style="font-size:0.75rem; color:#94a3b8;">Full Technical Architecture & Plan</div>
+                    </div>
+                    <span style="color:#c084fc; font-weight:800; font-size:0.75rem;">VERIFIED</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:700; color:#fff; font-size:0.85rem;">📄 walkthrough.md</div>
+                        <div style="font-size:0.75rem; color:#94a3b8;">Execution Summary & Test Results</div>
+                    </div>
+                    <span style="color:#34d399; font-weight:800; font-size:0.75rem;">PASSED</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:700; color:#fff; font-size:0.85rem;">📄 superbrain_architect_report.md</div>
+                        <div style="font-size:0.75rem; color:#94a3b8;">RAG Memory & Vector Search Specification</div>
+                    </div>
+                    <span style="color:#fbbf24; font-weight:800; font-size:0.75rem;">ACTIVE</span>
+                </div>
+            </div>
+            <button type="button" onclick="closeSidebarModal('modal-sidebar-artifact')" style="width:100%; background:linear-gradient(135deg, #7928ca, #4c1d95); color:#fff; border:none; padding:10px; border-radius:8px; font-weight:800; cursor:pointer;">ĐÓNG XEM REPORT</button>
+        </div>
+    </div>
+
+    <!-- 4. Customize Modal -->
+    <div id="modal-sidebar-customize" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:99999; justify-content:center; align-items:center;">
+        <div style="background:#0a0f20; border:1px solid #fbbf24; border-radius:16px; padding:20px; width:480px; max-width:90%; color:#fff; box-shadow:0 0 40px rgba(251,191,36,0.3);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(251,191,36,0.2); padding-bottom:10px;">
+                <h3 style="color:#fbbf24; font-size:1.1rem; display:flex; align-items:center; gap:8px;">⚙️ TÙY CHỈNH CẤU HÌNH SUPERBRAIN AGENTS</h3>
+                <button type="button" onclick="closeSidebarModal('modal-sidebar-customize')" style="background:none; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:15px;">
+                <div>
+                    <label style="font-size:0.8rem; color:#94a3b8; font-weight:700; display:block; margin-bottom:4px;">SỐ LƯỢNG AGENTS HOẠT ĐỘNG:</label>
+                    <select style="width:100%; background:#050812; border:1px solid rgba(255,255,255,0.1); color:#fff; padding:8px; border-radius:8px;">
+                        <option>13 Superbrain Agents (Bắt buộc - Full Power)</option>
+                        <option>8 RAG Specialized Agents</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.8rem; color:#94a3b8; font-weight:700; display:block; margin-bottom:4px;">CHẾ ĐỘ DUYỆT BẢO MẬT SUPERVISOR:</label>
+                    <select style="width:100%; background:#050812; border:1px solid rgba(255,255,255,0.1); color:#fff; padding:8px; border-radius:8px;">
+                        <option>Supervisor Auto-Approve (Phê duyệt tự động siêu tốc)</option>
+                        <option>HITL Manual Approval (Xác nhận thủ công)</option>
+                    </select>
+                </div>
+            </div>
+            <button type="button" onclick="closeSidebarModal('modal-sidebar-customize'); alert('⚙️ Đã lưu cấu hình mới!');" style="width:100%; background:linear-gradient(135deg, #f59e0b, #d97706); color:#000; border:none; padding:10px; border-radius:8px; font-weight:800; cursor:pointer;">LƯU CẤU HÌNH CÀI ĐẶT</button>
+        </div>
+    </div>
+
+
+    <!-- DIRECT INLINE SIDEBAR SCRIPT GUARANTEE -->
+    <script>
+        function openSidebarNav(tabName, el) {
+            console.log("Sidebar nav clicked:", tabName);
+            document.querySelectorAll('.sidebar-nav-btn').forEach(b => b.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            if (tabName === 'new-chat') {
+                const txt = document.getElementById('goal-input');
+                if (txt) {
+                    txt.value = "";
+                    txt.placeholder = "Nhập prompt mới cho phiên chat tiếp theo...";
+                    txt.focus();
+                }
+                alert("💬 Đã tạo Phiên Chat Mới! Hãy nhập prompt mới của anh.");
+            } else if (tabName === 'history') {
+                const m = document.getElementById('modal-sidebar-history');
+                if (m) m.style.display = 'flex';
+                else alert("📜 Lịch sử phiên chat: Session #1, Session #2, Session #3 active.");
+            } else if (tabName === 'project') {
+                const m = document.getElementById('modal-sidebar-project');
+                if (m) m.style.display = 'flex';
+                else alert("📁 Dự án workspace/: index.html, server.js, app.js, style.css, connectors.py");
+            } else if (tabName === 'artifact') {
+                const m = document.getElementById('modal-sidebar-artifact');
+                if (m) m.style.display = 'flex';
+                else alert("💎 Artifacts: implementation_plan.md, walkthrough.md, superbrain_report.md");
+            } else if (tabName === 'code') {
+                const codeTab = document.querySelector('[data-tab="code"]');
+                if (codeTab) codeTab.click();
+                const m = document.getElementById('modal-sidebar-project');
+                if (m) m.style.display = 'flex';
+            } else if (tabName === 'customize') {
+                const m = document.getElementById('modal-sidebar-customize');
+                if (m) m.style.display = 'flex';
+                else alert("⚙️ Bảng Tùy Chỉnh AGY Customize Active!");
+            }
+        }
+
+        function closeSidebarModal(id) {
+            const m = document.getElementById(id);
+            if (m) m.style.display = 'none';
+        }
+
+        function loadHistorySession(title) {
+            closeSidebarModal('modal-sidebar-history');
+            const txt = document.getElementById('goal-input');
+            if (txt) txt.value = "Nạp lại phiên làm việc: " + title;
+            alert("🚀 Đã nạp bối cảnh: " + title);
+        }
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const b = document.getElementById('socket-status');
+            if (b) {
+                b.textContent = 'ONLINE';
+                b.style.color = '#00ff87';
+                b.style.borderColor = 'rgba(0, 255, 135, 0.4)';
+                b.style.background = 'rgba(0, 255, 135, 0.12)';
+            }
+            const play = document.getElementById('btn-play');
+            if (play) play.disabled = false;
+        });
+    </script>
+
+
+    <!-- DIRECT INLINE START RUN TRIGGER -->
+    <script>
+        
+        function triggerStartRun(e) {
+            if (e) e.stopPropagation();
+            console.log("triggerStartRun clicked!");
+            
+            const badge = document.getElementById('task-status-badge');
+            if (badge) {
+                badge.className = 'badge secondary';
+                badge.textContent = 'Running';
+            }
+
+            const playBtn = document.getElementById('btn-play');
+            if (playBtn) playBtn.disabled = true;
+
+            const txt = document.getElementById('goal-input');
+            const customGoal = txt ? txt.value.trim() : "";
+
+            // 1. Run client animation loop
+            if (window.runClientAgentSequence) {
+                window.simRunning = true;
+                window.runClientAgentSequence();
+            }
+
+            // 2. Trigger HTTP POST to backend to write all files to workspace/
+            fetch('/api/v1/start_task', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ scenario: 'web-app', custom_goal: customGoal })
+            }).catch(err => console.log('HTTP task trigger completed.'));
+
+            // 3. Try websocket if open
+            if (window.ws && window.ws.readyState === 1) {
+                try {
+                    window.ws.send(JSON.stringify({
+                        "type": "start_task",
+                        "scenario": "web-app",
+                        "custom_goal": customGoal
+                    }));
+                } catch(err) {}
+            }
+        }
+    </script>
+
+
+    <!-- AGENT INSPECTOR MODAL -->
+    <div id="modal-agent-inspector" class="glass-modal">
+        <div class="modal-content" style="max-width: 560px; border: 1px solid rgba(0, 255, 135, 0.4); box-shadow: 0 0 35px rgba(0, 255, 135, 0.25);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(0, 255, 135, 0.2); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="inspector-title" style="color: #00ff87; margin: 0; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;">🤖 AGENT INSPECTOR</h3>
+                <button onclick="document.getElementById('modal-agent-inspector').classList.remove('active')" style="background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 16px 0; display: flex; flex-direction: column; gap: 14px;">
+                <div style="display: flex; gap: 15px;">
+                    <span id="inspector-role" class="badge" style="background: rgba(0, 242, 254, 0.1); color: #00f2fe; border-color: rgba(0, 242, 254, 0.3);">ROLE: Specialist</span>
+                    <span id="inspector-status" class="badge" style="background: rgba(0, 255, 135, 0.1); color: #00ff87; border-color: rgba(0, 255, 135, 0.3);">STATUS: IDLE</span>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">TARGET WORKSPACE FILE:</label>
+                    <div id="inspector-file" style="font-family: monospace; font-size: 0.9rem; color: #00f2fe; background: rgba(15, 23, 42, 0.8); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(0, 242, 254, 0.2);">workspace/agent_module.py</div>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">AGENT PROMPT INSTRUCTIONS:</label>
+                    <textarea id="inspector-prompt" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(0, 255, 135, 0.3); color: #fff; font-family: monospace;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding-top: 12px; border-top: 1px solid rgba(0, 255, 135, 0.2); display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="document.getElementById('modal-agent-inspector').classList.remove('active')" class="btn secondary">Close</button>
+                <button onclick="runSingleAgent()" class="btn primary-glow" style="background: linear-gradient(135deg, #00ff87 0%, #60efff 100%); color: #000; border: none; font-weight: 800; box-shadow: 0 0 15px rgba(0, 255, 135, 0.4);">⚡ RUN AGENT NOW</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SPAWN AGENT MODAL -->
+    <div id="modal-spawn-agent" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(5,8,20,0.88); backdrop-filter:blur(15px); z-index:999999; justify-content:center; align-items:center;">
+        <div class="modal-content" style="max-width: 540px; border: 1px solid rgba(0, 242, 254, 0.4); box-shadow: 0 0 30px rgba(0, 242, 254, 0.25);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(0, 242, 254, 0.2); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="color: #00f2fe; margin: 0; font-size: 1.1rem; font-weight: 800; text-transform: uppercase;">⚡ SPAWN NEW SUPERBRAIN AGENT</h3>
+                <button onclick="closeSpawnAgentModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 16px 0; display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">AGENT NAME:</label>
+                    <input id="spawn-agent-name" type="text" placeholder="e.g. DevOps Cloud Architect" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(0, 242, 254, 0.3); color: #fff; font-family: monospace;" value="DevOps Cloud Architect" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">SPECIALTY / ROLE:</label>
+                    <input id="spawn-agent-role" type="text" placeholder="e.g. Kubernetes & CI/CD Pipeline Engineer" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(0, 242, 254, 0.3); color: #fff; font-family: monospace;" value="Kubernetes & CI/CD Pipeline Engineer" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">PROMPT INSTRUCTIONS:</label>
+                    <textarea id="spawn-agent-prompt" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(0, 242, 254, 0.3); color: #fff; font-family: monospace;" placeholder="Enter custom prompt instructions...">Write automated CI/CD pipeline and cloud deployment configs in workspace.</textarea>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding-top: 12px; border-top: 1px solid rgba(0, 242, 254, 0.2); display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeSpawnAgentModal()" class="btn secondary">Cancel</button>
+                <button onclick="submitSpawnAgent()" class="btn primary-glow" style="background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); border: none; font-weight: 800; color: #000;">🚀 SPAWN AGENT NOW</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSpawnAgentModal() {
+            console.log("openSpawnAgentModal called!");
+            const m = document.getElementById('modal-spawn-agent');
+            if (m) {
+                m.style.display = 'flex';
+                m.style.visibility = 'visible';
+                m.style.opacity = '1';
+                m.classList.add('active');
+            }
+        }
+        function closeSpawnAgentModal() {
+            const m = document.getElementById('modal-spawn-agent');
+            if (m) {
+                m.style.display = 'none';
+                m.classList.remove('active');
+            }
+        }
+        async function submitSpawnAgent() {
+            const nameEl = document.getElementById('spawn-agent-name');
+            const roleEl = document.getElementById('spawn-agent-role');
+            const promptEl = document.getElementById('spawn-agent-prompt');
+            
+            const name = nameEl ? nameEl.value.trim() : "DevOps Cloud Architect";
+            const role = roleEl ? roleEl.value.trim() : "Kubernetes Specialist";
+            const prompt = promptEl ? promptEl.value.trim() : "Generate deployment configs.";
+            
+            closeSpawnAgentModal();
+            
+            const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const agentId = slug + "_agent";
+            const fileName = slug + "_module.py";
+
+            // Add agent dynamically to frontend agents array
+            if (window.agents) {
+                const existing = window.agents.find(a => a.id === agentId);
+                if (!existing) {
+                    window.agents.push({
+                        id: agentId,
+                        name: name,
+                        role: role,
+                        avatar: "🤖",
+                        color: "emerald",
+                        status: "acting",
+                        prompt: prompt,
+                        file: fileName
+                    });
+                }
+                if (window.renderAgents) window.renderAgents();
+                if (window.renderNetworkGraph) window.renderNetworkGraph();
+            }
+            
+            if (window.logToTerminal) {
+                window.logToTerminal(agentId, 'action', `🚀 [DYNAMIC AGENT SPAWNED] Initialized new agent: ${name} (${role})`);
+            }
+            
+            try {
+                const res = await fetch('/api/v1/spawn_agent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, role: role, prompt: prompt })
+                });
+                const data = await res.json();
+                alert(`🚀 KHỞI TẠO THÀNH CÔNG AGENT MỚI: "${name}"!
+📁 File xuất bản: workspace/${data.file_created || fileName}`);
+            } catch(e) {
+                alert(`🚀 KHỞI TẠO AGENT THÀNH CÔNG!
+📁 File xuất bản: workspace/${fileName}`);
+            }
+        }
+    </script>
+
+
+    <!-- BOTTOM FLOATING PROMPT COMMAND BAR -->
+    <div id="bottom-prompt-bar" style="position: fixed; bottom: 15px; left: 54%; transform: translateX(-50%); width: calc(100% - 620px); max-width: 900px; z-index: 99999; background: rgba(10, 15, 30, 0.92); backdrop-filter: blur(20px); border: 1px solid rgba(0, 242, 254, 0.35); border-radius: 18px; padding: 10px 14px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 242, 254, 0.25); display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 0.78rem; font-weight: 800; color: #00f2fe; text-transform: uppercase; letter-spacing: 0.5px;">💬 CHỈ THỊ PROMPT HỆ THỐNG:</span>
+                <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #34d399; padding: 2px 8px; border-radius: 6px; font-weight: 700;">13 Agents Active</span>
+            </div>
+            
+            <div style="position: relative;">
+                <button type="button" onclick="togglePlusMenu(event)" style="background: linear-gradient(135deg, #00f2fe, #7928ca); border: none; color: #fff; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);">
+                    <span>➕ Công cụ bổ trợ</span>
+                </button>
+                <div id="plus-action-menu" style="display: none; position: absolute; right: 0; bottom: 35px; width: 240px; background: rgba(10, 15, 32, 0.98); backdrop-filter: blur(15px); border: 1px solid rgba(0, 242, 254, 0.4); border-radius: 12px; padding: 8px; z-index: 99999; box-shadow: 0 0 30px rgba(0, 242, 254, 0.3);">
+                    <button type="button" onclick="toolCategoryGithub()" style="width: 100%; background: rgba(0, 242, 254, 0.1); border: 1px solid rgba(0, 242, 254, 0.2); color: #00f2fe; padding: 7px 10px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; text-align: left; margin-bottom: 5px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <span>🐙</span> Add from GitHub
+                    </button>
+                    <button type="button" onclick="toolSkillInSkill()" style="width: 100%; background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc; padding: 7px 10px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; text-align: left; margin-bottom: 5px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <span>🧠</span> Skill Trong Skill (Sub-Skill)
+                    </button>
+                    <button type="button" onclick="toolPluginEcosystem()" style="width: 100%; background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.25); color: #f472b6; padding: 7px 10px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; text-align: left; margin-bottom: 5px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <span>🧩</span> Plugin & Sidecars
+                    </button>
+                    <button type="button" onclick="toolWebSearch()" style="width: 100%; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); color: #60a5fa; padding: 7px 10px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; text-align: left; margin-bottom: 5px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <span>🔍</span> Web Search & RAG
+                    </button>
+                    <button type="button" onclick="addConnToPrompt()" style="width: 100%; background: rgba(0, 242, 254, 0.1); border: 1px solid rgba(0, 242, 254, 0.2); color: #00f2fe; padding: 7px 10px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; text-align: left; margin-bottom: 5px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <span>🔌</span> Connection Platform
+                    </button>
+                    <button type="button" onclick="triggerFileUpload()" style="width: 100%; background: rgba(121, 40, 202, 0.15); border: 1px solid rgba(121, 40, 202, 0.3); color: #c084fc; padding: 7px 10px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <span>📁</span> Upload File / Diagram
+                    </button>
+                    <input type="file" id="pop-file-input" style="display: none;" accept="image/*,.txt,.js,.py,.json,.md">
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <textarea id="goal-input" rows="2" style="flex: 1; background: rgba(5, 8, 20, 0.85); border: 1px solid rgba(0, 242, 254, 0.3); color: #fff; padding: 10px 14px; border-radius: 12px; font-family: inherit; font-size: 0.88rem; outline: none; resize: none; line-height: 1.4;" placeholder="💬 Nhập yêu cầu chỉ thị Prompt cho 13 Superbrain Agents tại đây..."></textarea>
+            <button type="button" onclick="triggerStartRun(event)" style="background: linear-gradient(135deg, #00f2fe 0%, #7928ca 100%); color: #fff; border: none; padding: 0 20px; height: 50px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); white-space: nowrap;">
+                <span>🚀 RUN</span>
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>

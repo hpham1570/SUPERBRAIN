@@ -1,0 +1,49 @@
+Created At: 2026-07-19T07:43:45Z
+Completed At: 2026-07-19T07:43:45Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 1267
+Total Bytes: 68904
+Showing lines 650 to 690
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+650:             shutil.rmtree(WORKSPACE_DIR, ignore_errors=True)
+651:             os.makedirs(WORKSPACE_DIR, exist_ok=True)
+652:             await self.websocket.send_json({"type": "reset_workspace"})
+653: 
+654:             # Seed calendar.json in workspace directory if receptionist scenario
+655:             if scenario_key == "receptionist":
+656:                 calendar_data = {
+657:                     "today": "2026-07-18",
+658:                     "schedules": [
+659:                         {"time": "14:00", "status": "reserved", "host": "CEO", "visitor": "Alice Smith"},
+660:                         {"time": "15:00", "status": "available", "host": "CEO", "visitor": None}
+661:                     ]
+662:                 }
+663:                 calendar_path = os.path.join(WORKSPACE_DIR, "calendar.json")
+664:                 with open(calendar_path, "w", encoding="utf-8") as f:
+665:                     json.dump(calendar_data, f, indent=4)
+666:                 
+667:                 # Notify frontend of file write
+668:                 await self.websocket.send_json({
+669:                     "type": "file_write",
+670:                     "filename": "calendar.json",
+671:                     "content": json.dumps(calendar_data, indent=4)
+672:                 })
+673: 
+674:             # 1. Resolve agents list (Use client agents if provided, else defaults)
+675:             if client_agents:
+676:                 agents_seq = client_agents
+677:             else:
+678:                 if scenario_key == "receptionist":
+679:                     agents_seq = [
+680:                         {"id": "supervisor", "name": "Aether-Receptionist", "role": "Front Lobby", "prompt": "Greet lobby guests and handle check-ins."},
+681:                         {"id": "researcher", "name": "Schedule-Manager", "role": "Calendar Bot", "prompt": "Verify availability slots and write database schedules."},
+682:                         {"id": "developer", "name": "Gatekeeper-Guard", "role": "Security Coordinator", "prompt": "Generate visitor badges and print files."},
+683:                         {"id": "reviewer", "name": "Host-Notifier", "role": "Internal Routing", "prompt": "Request authorization triggers to access host offices."}
+684:                     ]
+685:                 else:
+686:                     agents_seq = [
+687:                         {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Coordinate coding and audits."},
+688:                         {"id": "planner", "name": "Aether-Planner", "role": "Project Planner", "prompt": "Decompose high-level goals into concrete, structured step-by-step task lists, establish prioritization, and delegate instructions to technical sub-agents."},
+689:                         {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+690:                         {"id": "github_explorer", "name": "GitHub-Explorer", "role": "Open Source Analyst", "prompt": "Search GitHub repositories, analyze open-source code quality, evaluate licenses (MIT, Apache, GPL), verify security posture (issues, commits), and present open-source integration proposals to the CFO and Code-Architect."},
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

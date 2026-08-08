@@ -1,0 +1,92 @@
+Created At: 2026-07-19T12:22:06Z
+Completed At: 2026-07-19T12:22:06Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/step_1219_full_run_mock.py`
+Total Lines: 84
+Total Bytes: 5256
+Showing lines 1 to 84
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: def run_mock_scenario_sequence(self, scenario_key, agents_seq):
+2: 780:         """Simulated kịch bản sequence for dry-run."""
+3: 781:         if scenario_key == "receptionist":
+4: 782:             # Step 1: Receptionist greets visitor
+5: 783:             await self.websocket.send_json({"type": "task_progress", "progress": 10})
+6: 784:             res = await self.execute_agent_loop(
+7: 785:                 agents_seq[0], 
+8: 786:                 "Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Tell Schedule-Manager to inspect calendar.json for availability.", 
+9: 787:                 "Workspace initialized with calendar.json."
+10: 788:             )
+11: 789:             
+12: 790:             # Step 2: Schedule-Manager checks availability
+13: 791:             await self.websocket.send_json({"type": "task_progress", "progress": 30})
+14: 792:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Check calendar.json for 14:00 CEO meeting."})
+15: 793:             res = await self.execute_agent_loop(
+16: 794:                 agents_seq[1], 
+17: 795:                 "Read calendar.json to check if 14:00 is open. Report back to Receptionist. If closed, mention 15:00 is open.", 
+18: 796:                 "Lobby coordinates."
+19: 797:             )
+20: 798:             
+21: 799:             # Step 3: Receptionist coordinates scheduling update
+22: 800:             await self.websocket.send_json({"type": "task_progress", "progress": 50})
+23: 801:             await self.websocket.send_json({"type": "delegate_animation", "from": "researcher", "to": "supervisor", "content": "Report 14:00 conflict. Suggest 15:00."})
+24: 802:             res = await self.execute_agent_loop(
+25: 803:                 agents_seq[0],
+26: 804:                 "Alex Rivera agreed to meet at 15:00. Instruct Schedule-Manager to book the 15:00 slot in calendar.json.",
+27: 805:                 "Updated slot."
+28: 806:             )
+29: 807:             
+30: 808:             # Step 4: Schedule-Manager writes updated calendar
+31: 809:             await self.websocket.send_json({"type": "task_progress", "progress": 70})
+32: 810:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Update calendar.json time slot."})
+33: 811:             new_calendar_data = {
+34: 812:                 "today": "2026-07-18",
+35: 813:                 "schedules": [
+36: 814:                     {"time": "14:00", "status": "reserved", "host": "CEO", "visitor": "Alice Smith"},
+37: 815:                     {"time": "15:00", "status": "reserved", "host": "CEO", "visitor": "Alex Rivera"}
+38: 816:                 ]
+39: 817:             }
+40: 818:             res = await self.run_tool(
+41: 819:                 "researcher", 
+42: 820:                 "write_file", 
+43: 821:                 json.dumps({"filename": "calendar.json", "content": json.dumps(new_calendar_data, indent=4)})
+44: 822:             )
+45: 823:             await self.send_log("researcher", "observation", res)
+46: 824:             
+47: 825:             # Step 5: Host-Notifier runs HITL check (alerting CEO)
+48: 826:             await self.websocket.send_json({"type": "task_progress", "progress": 85})
+49: 827:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "reviewer", "content": "Notify CEO for gate entrance authorization."})
+50: 828:             res = await self.execute_agent_loop(
+51: 829:                 agents_seq[3],
+52: 830:                 "Alert the CEO (Host) to authorize gate clearance for Alex Rivera. Execute run_command 'notify-ceo --visitor Alex' which triggers HITL approval.",
+53: 831:                 "Clearance check."
+54: 832:             )
+55: 833:             
+56: 834:             # Step 6: Gatekeeper prints badge
+57: 835:             await self.websocket.send_json({"type": "task_progress", "progress": 95})
+58: 836:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "developer", "content": "Print visitor pass ticket."})
+59: 837:             badge_content = """=====================================
+60: 838:           AETHERNET VISITOR PASS
+61: 839: =====================================
+62: 840: GUEST: Alex Rivera
+63: 841: HOST: CEO
+64: 842: TIME: 15:00 (Reserved)
+65: 843: DATE: 2026-07-18
+66: 844: GATE LEVEL: LEVEL 4 AUDITORIUM
+67: 845: STATUS: AUTHORIZED BY HOST
+68: 846: ====================================="""
+69: 847:             res = await self.run_tool(
+70: 848:                 "developer",
+71: 849:                 "write_file",
+72: 850:                 json.dumps({"filename": "visitor_pass_alex.txt", "content": badge_content})
+73: 851:             )
+74: 852:             await self.send_log("developer", "observation", res)
+75: 853:             
+76: 854:             # Final greeting
+77: 855:             await self.websocket.send_json({"type": "task_progress", "progress": 100})
+78: 856:             await self.execute_agent_loop(
+79: 857:                 agents_seq[0],
+80: 858:                 "Wish visitor Alex Rivera a great meeting and hand over the pass. Finish.",
+81: 859:                 "Completed."
+82: 860:             )
+83: The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+84: 
+The above content shows the entire, complete file contents of the requested file.

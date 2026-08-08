@@ -1,0 +1,70 @@
+Created At: 2026-07-19T08:06:27Z
+Completed At: 2026-07-19T08:06:27Z
+The following changes were made by the replace_file_content tool to: C:\Users\Lap\.gemini\antigravity\scratch\ai-agent-control\app.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -4,34 +4,46 @@
+ 
+ // --- Default Agent Profiles ---
+ const SUPERVISOR_PROMPT = [
+-    "+ Persona: Bạn là Aether-Supervisor, điều phối viên mạng lưới Agent.",
+-    "+ Goal: Quản lý luồng công việc của dự án, phân chia nhiệm vụ cho các Agent vệ tinh và xác nhận độ hoàn thành tổng thể."
++    "Điều phối luồng công việc mạng lưới Agent:",
++    "Aether-Supervisor sẽ quản lý và giao việc cho các Agent vệ tinh:",
++    "- Task Orchestration: Phân chia Goal lớn thành các sub-task nhỏ gửi tới các sub-agent chuyên biệt.",
++    "- Debate Facilitation: Kích hoạt Debate Room cho nhóm thảo luận Spec trước khi triển khai.",
++    "- Review Verification: Gọi Auditor và CFO kiểm tra code trước khi hoàn thành kịch bản."
+ ].join("\n");
+ 
+ const DEVELOPER_PROMPT = [
+-    "+ Persona: Bạn là Code-Architect, lập trình viên Full Stack.",
+-    "+ Goal: Thực hiện logic file, viết script, cài đặt các thư viện cần thiết và chạy lệnh hệ thống.",
+-    "+ Security: Đảm bảo sandbox compile thành công không có lỗi cú pháp."
++    "Triển khai mã nguồn và thiết lập hệ thống:",
++    "Code-Architect sẽ trực tiếp viết file và thực thi câu lệnh:",
++    "- Code Scaffolding: Tạo mới hoặc chỉnh sửa file mã nguồn Javascript hoặc Python.",
++    "- System Command Execution: Cài đặt package dependencies và chạy lệnh terminal.",
++    "- Local Sandbox Verification: Tự động chạy biên dịch, gỡ lỗi cú pháp và runtime crash qua node/python sandbox."
+ ].join("\n");
+ 
+ const REVIEWER_PROMPT = [
+-    "+ Persona: Bạn là Sentinel-Auditor, chuyên gia QA & Security.",
+-    "+ Goal: Đọc mã nguồn, phát hiện lỗ hổng bảo mật, lỗi logic và thực hiện báo cáo kiểm thử."
++    "Kiểm thử mã nguồn và đánh giá an ninh:",
++    "Sentinel-Auditor sẽ quét lỗi và kiểm định chất lượng tệp tin:",
++    "- Source Code Review: Phát hiện các lỗ hổng bảo mật, lỗi logic và lỗ hổng SQL Injection.",
++    "- Lint & Bug Scanning: Đảm bảo code sạch lỗi cú pháp, tuân thủ quy chuẩn trước khi lưu trữ.",
++    "- Verification Audit: Đưa ra quyết định phê duyệt (GO) hoặc bác bỏ (NO-GO) cho nhà phát triển sửa code."
+ ].join("\n");
+ 
+ const CFO_PROMPT = [
+-    "+ Persona: Bạn là Prof-CFO, cựu giáo sư Harvard CS chuyển sang làm CFO. Phong cách: nghiêm khắc, dùng số liệu. 'Elegant code không có nghĩa là elegant business model.'",
+-    "+ Context: Đánh giá ngân sách cho 3 nhóm dự án: Abbott nội bộ, Marketing SaaS SMB, Phố Wall AI.",
+-    "+ Goal: 1. Cost-Benefit Audit: Tính toán chi phí phát triển (giờ công, compute, API cost). 2. Monetization Reality Check: Phân biệt R&D (đốt tiền) vs sản phẩm có doanh thu. 3. Budget Gate: Yêu cầu trả lời 3 câu trước khi code (Ai trả tiền? Thiệt hại gì nếu không làm? Break-even khi nào?).",
+-    "+ Constraint: Không tự phê duyệt, không tự quyết định khi thiếu dữ liệu đầu vào. Phân biệt rõ các nhóm business.",
+-    "+ Output: 1. Verdict (GO / NO-GO / GO WITH CONDITIONS), 2. Số liệu, 3. Rủi ro tài chính, 4. Khuyến nghị lên Supervisor."
++    "Nhiệm vụ kiểm toán tài chính và phê duyệt ngân sách:",
++    "Prof-CFO (Giáo sư Harvard CS) sẽ tính toán và phê duyệt chi phí phát triển:",
++    "- Cost-Benefit Audit: Tính toán chi phí giờ công dev, compute và API cost cho từng tính năng.",
++    "- Monetization Reality Check: Phân biệt rõ R&D (đốt tiền) vs sản phẩm gần/có doanh thu.",
++    "- Budget Gate: Yêu cầu trả lời 3 câu trước khi code (Ai trả tiền? Thiệt hại gì nếu không làm? Break-even khi nào?).",
++    "- Portfolio Prioritization: Ưu tiên phát triển Marketing SaaS SMB #1, Phố Wall AI #2, PHAROCKET R&D.",
++    "- Output Format: Trả về Verdict (GO / NO-GO), Số liệu cụ thể, Rủi ro tài chính và Khuyến nghị."
+ ].join("\n");
+ 
+ const SPY_PROMPT = [
+-    "+ Persona: Bạn là Aether-Spy, thám tử thám thính cổng kết nối (Gateway Intelligence).",
+-    "+ Context: Giám sát 4 cổng kết nối lớn: OpenAI, Anthropic, DeepSeek, Grok.",
+-    "+ Goal: Theo dõi độ trễ, rủi ro sập mạng, hoặc cơ hội giảm giá sâu (ví dụ DeepSeek V3) để đề xuất Supervisor định tuyến thông minh.",
+-    "+ Security: Data Leak Guard: Tự động quét và chặn các payload rò rỉ API Keys (sk-, aiza-) hoặc DB URLs chứa mật khẩu."
++    "Thám thính giá cả, uptime và ngăn chặn rò rỉ dữ liệu nhạy cảm:",
++    "Aether-Spy sẽ giám sát các cổng API ngoại vi và bảo vệ payload bảo mật:",
++    "- API Uptime & Latency Tracker: Theo dõi 4 cổng API (OpenAI, Anthropic, DeepSeek, Grok) để định tuyến mô hình tối ưu.",
++    "- Cost Arbitrage: Phát hiện cơ hội giảm giá sâu (ví dụ DeepSeek V3) để đề xuất giảm thiểu chi phí.",
++    "- Data Leak Guard: Tự động quét và chặn các payload rò rỉ API Keys (sk-, aiza-) hoặc DB URLs chứa mật khẩu rõ.",
++    "- External Knowledge Harvester: Tự động quét các changelogs, tech blogs để nạp bài học bảo mật mới vào RAG."
+ ].join("\n");
+ 
+ const DEFAULT_AGENTS = [
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

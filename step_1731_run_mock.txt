@@ -1,0 +1,38 @@
+Created At: 2026-07-19T08:41:06Z
+Completed At: 2026-07-19T08:41:06Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 1435
+Total Bytes: 80066
+Showing lines 1201 to 1230
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1201:                             "logType": "system",
+1202:                             "content": f"> [LEARNED LESSON] {lesson_obj['lesson']}"
+1203:                         })
+1204:             except Exception as le:
+1205:                 print(f"Learning loop skipped or failed: {le}")
+1206: 
+1207:             await self.websocket.send_json({"type": "task_progress", "progress": 100})
+1208:             await self.websocket.send_json({"type": "finished"})
+1209: 
+1210:         except Exception as e:
+1211:             print(f"Scenario running error: {e}")
+1212: 
+1213:     async def run_mock_scenario_sequence(self, scenario_key, agents_seq):
+1214:         """Simulated kịch bản sequence for dry-run."""
+1215:         if scenario_key == "receptionist":
+1216:             # Step 1: Receptionist greets visitor
+1217:             await self.websocket.send_json({"type": "task_progress", "progress": 10})
+1218:             res = await self.execute_agent_loop(
+1219:                 agents_seq[0], 
+1220:                 "Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Tell Schedule-Manager to inspect calendar.json for availability.", 
+1221:                 "Workspace initialized with calendar.json."
+1222:             )
+1223:             
+1224:             # Step 2: Schedule-Manager checks availability
+1225:             await self.websocket.send_json({"type": "task_progress", "progress": 30})
+1226:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Check calendar.json for 14:00 CEO meeting."})
+1227:             res = await self.execute_agent_loop(
+1228:                 agents_seq[1], 
+1229:                 "Read calendar.json to check if 14:00 is open. Report back to Receptionist. If closed, mention 15:00 is open.", 
+1230:                 "Lobby coordinates."
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

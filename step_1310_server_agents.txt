@@ -1,0 +1,54 @@
+Created At: 2026-07-19T07:18:32Z
+Completed At: 2026-07-19T07:18:32Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 1209
+Total Bytes: 65621
+Showing lines 610 to 655
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+610:                     ]
+611:                 }
+612:                 calendar_path = os.path.join(WORKSPACE_DIR, "calendar.json")
+613:                 with open(calendar_path, "w", encoding="utf-8") as f:
+614:                     json.dump(calendar_data, f, indent=4)
+615:                 
+616:                 # Notify frontend of file write
+617:                 await self.websocket.send_json({
+618:                     "type": "file_write",
+619:                     "filename": "calendar.json",
+620:                     "content": json.dumps(calendar_data, indent=4)
+621:                 })
+622: 
+623:             # 1. Resolve agents list (Use client agents if provided, else defaults)
+624:             if client_agents:
+625:                 agents_seq = client_agents
+626:             else:
+627:                 if scenario_key == "receptionist":
+628:                     agents_seq = [
+629:                         {"id": "supervisor", "name": "Aether-Receptionist", "role": "Front Lobby", "prompt": "Greet lobby guests and handle check-ins."},
+630:                         {"id": "researcher", "name": "Schedule-Manager", "role": "Calendar Bot", "prompt": "Verify availability slots and write database schedules."},
+631:                         {"id": "developer", "name": "Gatekeeper-Guard", "role": "Security Coordinator", "prompt": "Generate visitor badges and print files."},
+632:                         {"id": "reviewer", "name": "Host-Notifier", "role": "Internal Routing", "prompt": "Request authorization triggers to access host offices."}
+633:                     ]
+634:                 else:
+635:                     agents_seq = [
+636:                         {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Coordinate coding and audits."},
+637:                         {"id": "planner", "name": "Aether-Planner", "role": "Project Planner", "prompt": "Decompose high-level goals into concrete, structured step-by-step task lists, establish prioritization, and delegate instructions to technical sub-agents."},
+638:                         {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+639:                         {"id": "github_explorer", "name": "GitHub-Explorer", "role": "Open Source Analyst", "prompt": "Search GitHub repositories, analyze open-source code quality, evaluate licenses (MIT, Apache, GPL), verify security posture (issues, commits), and present open-source integration proposals to the CFO and Code-Architect."},
+640:                         {"id": "developer", "name": "Code-Architect", "role": "Developer", "prompt": "Write application code index.js and database.js."},
+641:                         {"id": "db_developer", "name": "DB-Architect", "role": "Database Engineer", "prompt": "Design optimized relational database schemas, write database seeding and migration scripts, and troubleshoot SQL errors."},
+642:                         {"id": "cfo", "name": "Prof-CFO", "role": "Chief Financial Officer (Harvard CS Prof)", "prompt": "Bạn là Prof-CFO, cựu giáo sư Harvard CS chuyển sang làm CFO. Phong cách: nghiêm khắc, dùng số liệu. \"Elegant code không có nghĩa là elegant business model.\"\nNhiệm vụ:\n1. Cost-Benefit Audit: Tính toán chi phí phát triển (giờ công, compute, API cost).\n2. Monetization Reality Check: Phân biệt R&D (đốt tiền) vs sản phẩm có doanh thu.\n3. Budget Gate: Yêu cầu trả lời 3 câu trước khi code (Ai trả tiền? Thiệt hại gì nếu không làm? Break-even khi nào?).\n4. Portfolio Prioritization: Ưu tiên Marketing SaaS #1, Phố Wall AI #2, PHAROCKET R&D.\n5. Red Flag Alerts: Cảnh báo feature creep, compliance risk, chi phí API/infra tăng.\nInput Schema:\nBạn sẽ nhận dữ liệu đầu vào dạng JSON tuân thủ chuẩn JSON Schema trong tệp prof_cfo_input_schema.json gồm các trường: request_id, source_agent, project { name, category }, request_type, feature_description, financials { estimated_dev_hours, api_compute_cost_monthly_usd, current_paying_customers, projected_revenue_monthly_usd, time_to_revenue_ready_days, opportunity_cost_note }, customer_context, compliance_flags.\nĐầu ra:\n1. Verdict (GO / NO-GO / GO WITH CONDITIONS)\n2. Số liệu (cụ thể)\n3. Rủi ro tài chính (2-3 ý)\n4. Khuyến nghị lên Supervisor (1-2 câu thẳng)."},
+643:                         {"id": "senior_developer", "name": "Senior-Coder", "role": "Senior Developer", "prompt": "Write highly optimized, clean, and well-structured source code, install dependencies, and run validation scripts."},
+644:                         {"id": "reviewer", "name": "Sentinel-Auditor", "role": "QA", "prompt": "Review files for bugs and write security audits."},
+645:                         {"id": "devops", "name": "Aether-DevOps", "role": "DevOps Engineer", "prompt": "Configure CI/CD pipelines, write Dockerfiles and deployment scripts, manage environment variables, and verify production deployment status."}
+646:                     ]
+647: 
+648:             # If mock mode, keep the standard hardcoded sequence for simplicity
+649:             if IS_MOCK_MODE:
+650:                 await self.run_mock_scenario_sequence(scenario_key, agents_seq)
+651:                 return
+652: 
+653:             # --- DYNAMIC ORCHESTRATOR ROUTING LOOP ---
+654:             # Find the Supervisor (typically the first agent, or search by id)
+655:             supervisor = next((a for a in agents_seq if a["id"] == "supervisor"), agents_seq[0])
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

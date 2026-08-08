@@ -1,0 +1,59 @@
+Created At: 2026-07-19T08:23:13Z
+Completed At: 2026-07-19T08:23:13Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 1432
+Total Bytes: 79035
+Showing lines 780 to 830
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+780:             # --- SPY EXTERNAL KNOWLEDGE HARVESTER ---
+781:             await self.spy_harvest_knowledge()
+782:             
+783:             # RAG Memory query: Retrieve top 3 contextually relevant lessons for this goal
+784:             relevant_lessons = query_memory(goal, top_n=3)
+785:             memory_str = ""
+786:             if relevant_lessons:
+787:                 memory_str = "\n".join([f"- Context: {l.get('context')}\n  Lesson: {l.get('lesson')}" for l in relevant_lessons])
+788:                 print(f"RAG retrieved {len(relevant_lessons)} relevant lessons for goal: '{goal[:50]}...'")
+789: 
+790:             # --- START GROUP DEBATE PHASE ---
+791:             await self.websocket.send_json({
+792:                 "type": "log",
+793:                 "agent": None,
+794:                 "logType": "system",
+795:                 "content": "> [DEBATE ROOM] Opening group discussion panel to align on project specification..."
+796:             })
+797:             
+798:             debate_participants = [
+799:                 {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator"},
+800:                 {"id": "cfo", "name": "Prof-CFO", "role": "Financial Officer"},
+801:                 {"id": "developer", "name": "Code-Architect", "role": "Developer"},
+802:                 {"id": "reviewer", "name": "Sentinel-Auditor", "role": "Sentinel-Auditor"}
+803:             ]
+804:             
+805:             participants = []
+806:             for dp in debate_participants:
+807:                 match = next((a for a in agents_seq if a["id"] == dp["id"]), None)
+808:                 if match:
+809:                     participants.append(match)
+810:             if not participants:
+811:                 participants = agents_seq[:4]
+812:                 
+813:             debate_log = []
+814:             
+815:             for turn in range(len(participants)):
+816:                 active_da = participants[turn]
+817:                 await self.websocket.send_json({"type": "agent_status", "agent": active_da["id"], "status": "thinking"})
+818:                 
+819:                 if IS_MOCK_MODE:
+820:                     await asyncio.sleep(2.5)
+821:                     if active_da["id"] == "supervisor":
+822:                         msg = f"Chào nhóm, chúng ta hãy cùng phân tích, phản biện và đưa ra đề xuất tối ưu nhất cho kịch bản: '{goal}'."
+823:                     elif active_da["id"] == "cfo":
+824:                         msg = "Xét về chi phí phát triển (Estimated Dev Hours) và tính chất dự án, tôi đề nghị thiết lập cơ chế lưu trữ SQLite đơn giản để tránh tốn kém ngân sách compute."
+825:                     elif active_da["id"] == "developer":
+826:                         msg = "Tôi đồng ý. Tôi sẽ thiết lập cấu trúc file index.js module hóa, tách biệt logic DB và router để Auditor dễ dàng quét kiểm thử."
+827:                     else:
+828:                         msg = "Đã rõ. Sentinel-Auditor sẽ giám sát chặt chẽ các file được ghi. Hãy chắc chắn không có lỗi cú pháp và không rò rỉ API keys trong payload."
+829:                     thought = f"Phân tích kịch bản dưới góc độ {active_da['role']}."
+830:                 else:
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

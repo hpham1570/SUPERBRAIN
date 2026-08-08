@@ -1,0 +1,19 @@
+Created At: 2026-07-19T08:32:59Z
+Completed At: 2026-07-19T08:32:59Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 1435
+Total Bytes: 79471
+Showing lines 748 to 758
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+748:                         {"id": "developer", "name": "Gatekeeper-Guard", "role": "Security Coordinator", "prompt": "Generate visitor badges and print files."},
+749:                         {"id": "reviewer", "name": "Host-Notifier", "role": "Internal Routing", "prompt": "Request authorization triggers to access host offices."}
+750:                     ]
+751:                 else:
+752:                     agents_seq = [
+753:                         {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Điều phối luồng công việc mạng lưới Agent:\nAether-Supervisor sẽ quản lý và giao việc cho các Agent vệ tinh:\n- Task Orchestration: Phân chia Goal lớn thành các sub-task nhỏ gửi tới các sub-agent chuyên biệt.\n- Debate Facilitation: Kích hoạt Debate Room cho nhóm thảo luận Spec trước khi triển khai.\n- Review Verification: Gọi Auditor và CFO kiểm tra code trước khi hoàn thành kịch bản."},
+754:                         {"id": "planner", "name": "Aether-Planner", "role": "Project Planner", "prompt": "Decompose high-level goals into concrete, structured step-by-step task lists, establish prioritization, and delegate instructions to technical sub-agents."},
+755:                         {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+756:                         {"id": "github_explorer", "name": "GitHub-Explorer", "role": "Open Source Analyst", "prompt": "Search GitHub repositories, analyze open-source code quality, evaluate licenses (MIT, Apache, GPL), verify security posture (issues, commits), and present open-source integration proposals to the CFO and Code-Architect."},
+757:                         {"id": "developer", "name": "Code-Architect", "role": "Developer", "prompt": "Triển khai mã nguồn và thiết lập hệ thống:\nCode-Architect sẽ trực tiếp viết file và thực thi câu lệnh:\n- Code Scaffolding: Tạo mới hoặc chỉnh sửa file mã nguồn Javascript hoặc Python.\n- System Command Execution: Cài đặt package dependencies và chạy lệnh terminal.\n- Local Sandbox Verification: Tự động chạy biên dịch, gỡ lỗi cú pháp và runtime crash qua node/python sandbox."},
+758:                         {"id": "db_developer", "name": "DB-Architect", "role": "Database Engineer", "prompt": "Design optimized relational database schemas, write database seeding and migration scripts, and troubleshoot SQL errors."},
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

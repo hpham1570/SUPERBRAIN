@@ -1,0 +1,47 @@
+Created At: 2026-07-19T12:21:55Z
+Completed At: 2026-07-19T12:21:55Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/step_1731_run_mock.txt`
+Total Lines: 39
+Total Bytes: 2556
+Showing lines 1 to 39
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: Created At: 2026-07-19T08:41:06Z
+2: Completed At: 2026-07-19T08:41:06Z
+3: File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+4: Total Lines: 1435
+5: Total Bytes: 80066
+6: Showing lines 1201 to 1230
+7: The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+8: 1201:                             "logType": "system",
+9: 1202:                             "content": f"> [LEARNED LESSON] {lesson_obj['lesson']}"
+10: 1203:                         })
+11: 1204:             except Exception as le:
+12: 1205:                 print(f"Learning loop skipped or failed: {le}")
+13: 1206: 
+14: 1207:             await self.websocket.send_json({"type": "task_progress", "progress": 100})
+15: 1208:             await self.websocket.send_json({"type": "finished"})
+16: 1209: 
+17: 1210:         except Exception as e:
+18: 1211:             print(f"Scenario running error: {e}")
+19: 1212: 
+20: 1213:     async def run_mock_scenario_sequence(self, scenario_key, agents_seq):
+21: 1214:         """Simulated kịch bản sequence for dry-run."""
+22: 1215:         if scenario_key == "receptionist":
+23: 1216:             # Step 1: Receptionist greets visitor
+24: 1217:             await self.websocket.send_json({"type": "task_progress", "progress": 10})
+25: 1218:             res = await self.execute_agent_loop(
+26: 1219:                 agents_seq[0], 
+27: 1220:                 "Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Tell Schedule-Manager to inspect calendar.json for availability.", 
+28: 1221:                 "Workspace initialized with calendar.json."
+29: 1222:             )
+30: 1223:             
+31: 1224:             # Step 2: Schedule-Manager checks availability
+32: 1225:             await self.websocket.send_json({"type": "task_progress", "progress": 30})
+33: 1226:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Check calendar.json for 14:00 CEO meeting."})
+34: 1227:             res = await self.execute_agent_loop(
+35: 1228:                 agents_seq[1], 
+36: 1229:                 "Read calendar.json to check if 14:00 is open. Report back to Receptionist. If closed, mention 15:00 is open.", 
+37: 1230:                 "Lobby coordinates."
+38: The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+39: 
+The above content shows the entire, complete file contents of the requested file.

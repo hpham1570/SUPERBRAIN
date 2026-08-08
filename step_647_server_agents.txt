@@ -1,0 +1,44 @@
+Created At: 2026-07-19T01:13:57Z
+Completed At: 2026-07-19T01:13:57Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 699
+Total Bytes: 36579
+Showing lines 360 to 395
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+360:                     agents_seq = [
+361:                         {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Coordinate coding and audits."},
+362:                         {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+363:                         {"id": "developer", "name": "Code-Architect", "role": "Developer", "prompt": "Write application code index.js and database.js."},
+364:                         {"id": "senior_developer", "name": "Senior-Coder", "role": "Senior Developer", "prompt": "Write highly optimized, clean, and well-structured source code, install dependencies, and run validation scripts."},
+365:                         {"id": "reviewer", "name": "Sentinel-Auditor", "role": "QA", "prompt": "Review files for bugs and write security audits."}
+366:                     ]
+367: 
+368:             # If mock mode, keep the standard hardcoded sequence for simplicity
+369:             if IS_MOCK_MODE:
+370:                 await self.run_mock_scenario_sequence(scenario_key, agents_seq)
+371:                 return
+372: 
+373:             # --- DYNAMIC ORCHESTRATOR ROUTING LOOP ---
+374:             # Find the Supervisor (typically the first agent, or search by id)
+375:             supervisor = next((a for a in agents_seq if a["id"] == "supervisor"), agents_seq[0])
+376:             sub_agents = [a for a in agents_seq if a["id"] != supervisor["id"]]
+377: 
+378:             # Format the list of available sub-agents for the Supervisor
+379:             sub_agents_desc = "\n".join([f"- {a['id']}: Name: '{a['name']}', Role: '{a['role']}'. Instructions: {a['prompt']}" for a in sub_agents])
+380: 
+381:             context_history = f"Lobby Desk workspace initialized. Tệp calendar.json đã được tạo sẵn.\nAvailable Sub-Agents you can delegate tasks to:\n{sub_agents_desc}"
+382:             
+383:             # Start loop
+384:             turns = 0
+385:             await self.websocket.send_json({"type": "task_progress", "progress": 10})
+386:             
+387:             main_goals = {
+388:                 "receptionist": "Lobby check-in: Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Check calendars, reschedule if needed, notify the CEO (Host) for clearance, and print a visitor pass badge.",
+389:                 "web-app": "Build Express App: Scaffold a simple API server, write files, install express package, and security audit index.js.",
+390:                 "market-analysis": "Consolidate Tech Stock trends, write report.md, and deploy to CDN.",
+391:                 "security-audit": "Scan boundary ports, check CVEs, and write patch recommendations."
+392:             }
+393:             goal = custom_goal or main_goals.get(scenario_key, "Execute cooperation loops.")
+394: 
+395:             while turns < 8:
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

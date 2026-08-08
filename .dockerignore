@@ -1,0 +1,9 @@
+node_modules
+__pycache__
+*.pyc
+*.pyo
+.git
+.gitignore
+.env
+.system_generated
+scratch

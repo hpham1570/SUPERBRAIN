@@ -1,0 +1,99 @@
+Created At: 2026-07-19T11:49:35Z
+Completed At: 2026-07-19T11:49:35Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 1481
+Total Bytes: 85601
+Showing lines 795 to 885
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+795:                 print(f"RAG retrieved {len(relevant_lessons)} relevant lessons for goal: '{goal[:50]}...'")
+796: 
+797:             # --- START GROUP DEBATE PHASE ---
+798:             await self.websocket.send_json({
+799:                 "type": "log",
+800:                 "agent": None,
+801:                 "logType": "system",
+802:                 "content": "> [DEBATE ROOM] Opening group discussion panel to align on project specification..."
+803:             })
+804:             
+805:             debate_participants = [
+806:                 {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator"},
+807:                 {"id": "market_analyst", "name": "Intel-Analyst", "role": "Market Researcher"},
+808:                 {"id": "cfo", "name": "Prof-CFO", "role": "Financial Officer"},
+809:                 {"id": "developer", "name": "Code-Architect", "role": "Developer"},
+810:                 {"id": "reviewer", "name": "Sentinel-Auditor", "role": "Sentinel-Auditor"}
+811:             ]
+812:             
+813:             participants = []
+814:             for dp in debate_participants:
+815:                 match = next((a for a in agents_seq if a["id"] == dp["id"]), None)
+816:                 if match:
+817:                     participants.append(match)
+818:             if not participants:
+819:                 participants = agents_seq[:4]
+820:                 
+821:             debate_log = []
+822:             
+823:             for turn in range(len(participants)):
+824:                 active_da = participants[turn]
+825:                 await self.websocket.send_json({"type": "agent_status", "agent": active_da["id"], "status": "thinking"})
+826:                 
+827:                 if IS_MOCK_MODE:
+828:                     await asyncio.sleep(2.5)
+829:                     if active_da["id"] == "supervisor":
+830:                         msg = f"Chào nhóm, chúng ta hãy cùng phân tích, phản biện và đưa ra đề xuất tối ưu nhất cho kịch bản: '{goal}'."
+831:                     elif active_da["id"] == "market_analyst":
+832:                         msg = "Về mặt thị trường, đối thủ hiện tại đang hỗ trợ các thư viện SQLite rất tốt nhưng chưa tối ưu về quản lý file. Chúng ta nên tập trung làm nổi bật tính bảo mật và gọn nhẹ của database."
+833:                     elif active_da["id"] == "cfo":
+834:                         msg = "Xét về chi phí phát triển (Estimated Dev Hours) và tính chất dự án, tôi đề nghị thiết lập cơ chế lưu trữ SQLite đơn giản để tránh tốn kém ngân sách compute."
+835:                     elif active_da["id"] == "developer":
+836:                         msg = "Tôi đồng ý. Tôi sẽ thiết lập cấu trúc file index.js module hóa, tách biệt logic DB và router để Auditor dễ dàng quét kiểm thử."
+837:                     else:
+838:                         msg = "Đã rõ. Sentinel-Auditor sẽ giám sát chặt chẽ các file được ghi. Hãy chắc chắn không có lỗi cú pháp và không rò rỉ API keys trong payload."
+839:                     thought = f"Phân tích kịch bản dưới góc độ {active_da['role']}."
+840:                 else:
+841:                     debate_prompt = f"""
+842:                     You are participating in a group debate for the Aether Agent Network.
+843:                     Participants: {', '.join([p['name'] + ' (' + p['role'] + ')' for p in participants])}
+844:                     
+845:                     Your Agent Persona: {active_da['prompt']}
+846:                     
+847:                     Debate Log so far:
+848:                     {chr(10).join(debate_log)}
+849:                     
+850:                     Goal under discussion: {goal}
+851:                     
+852:                     Write your brief contribution to this debate (maximum 3-4 sentences). 
+853:                     Analyze the task, raise concerns (CFO = cost/revenue/ROI, Developer = database/files/architecture, Auditor = QA/vulnerabilities/compliance, Supervisor = orchestration).
+854:                     Output in Vietnamese.
+855:                     Your response must be wrapped in a JSON structure:
+856:                     {{
+857:                         "thought": "Reasoning about your position...",
+858:                         "message": "Your visible debate chat message..."
+859:                     }}
+860:                     """
+861:                     try:
+862:                         response = None
+863:                         for model_name in ["gemini-3.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite"]:
+864:                             try:
+865:                                 model = genai.GenerativeModel(model_name)
+866:                                 response = model.generate_content(debate_prompt)
+867:                                 if response and response.text:
+868:                                     break
+869:                             except:
+870:                                 continue
+871:                         
+872:                         res_json = clean_and_parse_json(response.text)
+873:                         msg = res_json.get("message", "Ready to proceed.")
+874:                         thought = res_json.get("thought", "Analyzing position.")
+875:                     except Exception as e:
+876:                         msg = f"Ready to support the team's recommendations. ({e})"
+877:                         thought = "Fallback response."
+878:                 
+879:                 await self.websocket.send_json({
+880:                     "type": "debate_message",
+881:                     "agent": active_da["id"],
+882:                     "name": active_da["name"],
+883:                     "role": active_da["role"],
+884:                     "message": msg,
+885:                     "thought": thought
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

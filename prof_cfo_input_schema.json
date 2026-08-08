@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProfCFO_InputContext",
+  "type": "object",
+  "required": ["request_id", "source_agent", "project", "request_type", "financials"],
+  "properties": {
+    "request_id": {
+      "type": "string",
+      "description": "UUID hoặc timestamp-based ID cho tracking"
+    },
+    "source_agent": {
+      "type": "string",
+      "enum": ["Aether-Supervisor", "Aether-Planner", "Code-Architect", "Senior-Coder"],
+      "description": "Agent nào gửi request lên Prof-CFO"
+    },
+    "project": {
+      "type": "object",
+      "required": ["name", "category"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "examples": ["PHAROCKET", "Phố Wall AI", "Marketing SaaS SMB", "Abbott Manufacturing Tool"]
+        },
+        "category": {
+          "type": "string",
+          "enum": ["internal_no_revenue", "near_revenue", "long_term_rd"],
+          "description": "Nhóm business: (a) Abbott nội bộ, (b) Marketing SaaS gần doanh thu, (c) R&D dài hạn"
+        }
+      }
+    },
+    "request_type": {
+      "type": "string",
+      "enum": ["new_feature", "budget_gate", "prioritization_review", "monetization_check", "red_flag_review"]
+    },
+    "feature_description": {
+      "type": "string",
+      "description": "Mô tả ngắn gọn feature/dự án cần audit"
+    },
+    "financials": {
+      "type": "object",
+      "properties": {
+        "estimated_dev_hours": { "type": "number" },
+        "api_compute_cost_monthly_usd": { "type": "number" },
+        "current_paying_customers": { "type": "integer", "default": 0 },
+        "projected_revenue_monthly_usd": { "type": "number" },
+        "time_to_revenue_ready_days": { "type": "integer" },
+        "opportunity_cost_note": {
+          "type": "string",
+          "description": "Dự án nào bị delay nếu ưu tiên cái này"
+        }
+      }
+    },
+    "customer_context": {
+      "type": "object",
+      "properties": {
+        "paying_customer_exists": { "type": "boolean" },
+        "customer_request_source": {
+          "type": "string",
+          "enum": ["direct_request", "market_research", "founder_hypothesis", "none"]
+        }
+      }
+    },
+    "compliance_flags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Vd: 'financial_disclaimer_missing', 'data_privacy_unreviewed'"
+    },
+    "prior_verdict": {
+      "type": ["object", "null"],
+      "description": "Verdict lần audit trước (nếu có) để tránh lặp lại đánh giá",
+      "properties": {
+        "verdict": { "type": "string", "enum": ["GO", "NO-GO", "GO_WITH_CONDITIONS"] },
+        "date": { "type": "string", "format": "date" }
+      }
+    }
+  }
+}

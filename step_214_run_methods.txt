@@ -1,0 +1,446 @@
+Created At: 2026-07-18T22:48:02Z
+Completed At: 2026-07-18T22:48:02Z
+The following changes were made by the replace_file_content tool to: C:\Users\Lap\.gemini\antigravity\scratch\ai-agent-control\server.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -245,7 +245,7 @@
+             return last_thought
+ 
+ 
+-    async def run_scenario(self, scenario_key):
++    async def run_scenario(self, scenario_key, client_agents=None):
+         """Runs the agent pipeline sequence in a background task to prevent blocking the socket receiver."""
+         try:
+             # Initialize workspace files
+@@ -252,16 +252,8 @@
+             os.makedirs(WORKSPACE_DIR, exist_ok=True)
+             await self.websocket.send_json({"type": "reset_workspace"})
+ 
++            # Seed calendar.json in workspace directory if receptionist scenario
+             if scenario_key == "receptionist":
+-                # Define Receptionist Agent configurations
+-                agents_seq = [
+-                    {"id": "supervisor", "name": "Aether-Receptionist", "role": "Front Lobby", "prompt": "Greet lobby guests and handle check-ins."},
+-                    {"id": "researcher", "name": "Schedule-Manager", "role": "Calendar Bot", "prompt": "Verify availability slots and write database schedules."},
+-                    {"id": "developer", "name": "Gatekeeper-Guard", "role": "Security Coordinator", "prompt": "Generate visitor badges and print files."},
+-                    {"id": "reviewer", "name": "Host-Notifier", "role": "Internal Routing", "prompt": "Request authorization triggers to access host offices."}
+-                ]
+-                
+-                # Seed calendar.json in workspace directory
+                 calendar_data = {
+                     "today": "2026-07-18",
+                     "schedules": [
+@@ -278,70 +278,215 @@
+                     "filename": "calendar.json",
+                     "content": json.dumps(calendar_data, indent=4)
+                 })
+-                
+-                context_history = "Workspace initialized with calendar.json."
+-                
+-                # Step 1: Receptionist greets visitor
+-                await self.websocket.send_json({"type": "task_progress", "progress": 10})
+-                res = await self.execute_agent_loop(
+-                    agents_seq[0], 
+-                    "Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Tell Schedule-Manager to inspect calendar.json for availability.", 
+-                    context_history
+-                )
+-                context_history += f"\n- Receptionist: {res}"
+-                
+-                # Step 2: Schedule-Manager checks availability
+-                await self.websocket.send_json({"type": "task_progress", "progress": 30})
+-                await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Check calendar.json for 14:00 CEO meeting."})
+-                res = await self.execute_agent_loop(
+-                    agents_seq[1], 
+-                    "Read calendar.json to check if 14:00 is open. Report back to Receptionist. If closed, mention 15:00 is open.", 
+-                    context_history
+-                )
+-                context_history += f"\n- Schedule-Manager: {res}"
+-                
+-                # Step 3: Receptionist coordinates scheduling update
+-                await self.websocket.send_json({"type": "task_progress", "progress": 50})
+-                await self.websocket.send_json({"type": "delegate_animation", "from": "researcher", "to": "supervisor", "content": "Report 14:00 conflict. Suggest 15:00."})
+-                res = await self.execute_agent_loop(
+-                    agents_seq[0],
+-                    "Alex Rivera agreed to meet at 15:00. Instruct Schedule-Manager to book the 15:00 slot in calendar.json.",
+-                    context_history
+-                )
+-                context_history += f"\n- Receptionist: {res}"
+-                
+-                # Step 4: Schedule-Manager writes updated calendar
+-                await self.websocket.send_json({"type": "task_progress", "progress": 70})
+-                await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Update calendar.json time slot."})
+-                new_calendar_data = {
+-                    "today": "2026-07-18",
+-                    "schedules": [
+-                        {"time": "14:00", "status": "reserved", "host": "CEO", "visitor": "Alice Smith"},
+-                        {"time": "15:00", "status": "reserved", "host": "CEO", "visitor": "Alex Rivera"}
+-                    ]
+-                }
+-                res = await self.run_tool(
+-                    "researcher", 
+-                    "write_file", 
+-                    json.dumps({"filename": "calendar.json", "content": json.dumps(new_calendar_data, indent=4)})
+-                )
+-                await self.send_log("researcher", "observation", res)
+-                context_history += f"\n- Schedule-Manager: Updated calendar.json."
+-                
+-                # Step 5: Host-Notifier runs HITL check (alerting CEO)
+-                await self.websocket.send_json({"type": "task_progress", "progress": 85})
+-                await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "reviewer", "content": "Notify CEO for gate entrance authorization."})
+-                res = await self.execute_agent_loop(
+-                    agents_seq[3],
+-                    "Alert the CEO (Host) to authorize gate clearance for Alex Rivera. Execute run_command 'notify-ceo --visitor Alex' which triggers HITL approval.",
+-                    context_history
+-                )
+-                context_history += f"\n- Host-Notifier: {res}"
+-                
+-                # Step 6: Gatekeeper prints badge
+-                await self.websocket.send_json({"type": "task_progress", "progress": 95})
+-                await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "developer", "content": "Print visitor pass ticket."})
+-                badge_content = """=====================================
++
++            # 1. Resolve agents list (Use client agents if provided, else defaults)
++            if client_agents:
++                agents_seq = client_agents
++            else:
++                if scenario_key == "receptionist":
++                    agents_seq = [
++                        {"id": "supervisor", "name": "Aether-Receptionist", "role": "Front Lobby", "prompt": "Greet lobby guests and handle check-ins."},
++                        {"id": "researcher", "name": "Schedule-Manager", "role": "Calendar Bot", "prompt": "Verify availability slots and write database schedules."},
++                        {"id": "developer", "name": "Gatekeeper-Guard", "role": "Security Coordinator", "prompt": "Generate visitor badges and print files."},
++                        {"id": "reviewer", "name": "Host-Notifier", "role": "Internal Routing", "prompt": "Request authorization triggers to access host offices."}
++                    ]
++                else:
++                    agents_seq = [
++                        {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Coordinate coding and audits."},
++                        {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
++                        {"id": "developer", "name": "Code-Architect", "role": "Developer", "prompt": "Write application code index.js and database.js."},
++                        {"id": "reviewer", "name": "Sentinel-Auditor", "role": "QA", "prompt": "Review files for bugs and write security audits."}
++                    ]
++
++            # If mock mode, keep the standard hardcoded sequence for simplicity
++            if IS_MOCK_MODE:
++                await self.run_mock_scenario_sequence(scenario_key, agents_seq)
++                return
++
++            # --- DYNAMIC ORCHESTRATOR ROUTING LOOP ---
++            # Find the Supervisor (typically the first agent, or search by id)
++            supervisor = next((a for a in agents_seq if a["id"] == "supervisor"), agents_seq[0])
++            sub_agents = [a for a in agents_seq if a["id"] != supervisor["id"]]
++
++            # Format the list of available sub-agents for the Supervisor
++            sub_agents_desc = "\n".join([f"- {a['id']}: Name: '{a['name']}', Role: '{a['role']}'. Instructions: {a['prompt']}" for a in sub_agents])
++
++            context_history = f"Lobby Desk workspace initialized. Tệp calendar.json đã được tạo sẵn.\nAvailable Sub-Agents you can delegate tasks to:\n{sub_agents_desc}"
++            
++            # Start loop
++            turns = 0
++            await self.websocket.send_json({"type": "task_progress", "progress": 10})
++            
++            main_goals = {
++                "receptionist": "Lobby check-in: Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Check calendars, reschedule if needed, notify the CEO (Host) for clearance, and print a visitor pass badge.",
++                "web-app": "Build Express App: Scaffold a simple API server, write files, install express package, and security audit index.js.",
++                "market-analysis": "Consolidate Tech Stock trends, write report.md, and deploy to CDN.",
++                "security-audit": "Scan boundary ports, check CVEs, and write patch recommendations."
++            }
++            goal = main_goals.get(scenario_key, "Execute cooperation loops.")
++
++            while turns < 8:
++                turns += 1
++                await self.websocket.send_json({"type": "agent_status", "agent": supervisor["id"], "status": "thinking"})
++                
++                # Dynamic Supervisor prompt listing available sub-agents
++                prompt = f"""
++                You are '{supervisor['name']}', role '{supervisor['role']}'.
++                Your System Prompt: {supervisor['prompt']}
++                
++                Your Goal: {goal}
++                Available Sub-Agents:
++                {sub_agents_desc}
++
++                Current workspace context and history: {context_history}
++
++                You can choose to delegate sub-tasks to any of your sub-agents, or complete the task yourself. 
++                Output EXACTLY in this JSON format:
++                {{
++                    "thought": "Reason about what to do next. If you received results from a sub-agent, analyze them.",
++                    "action": "delegate" | "write_file" | "read_file" | "run_command" | "done",
++                    "args": "arguments for the action. If action is 'delegate', this MUST be a JSON string like: {{\\"agent\\": \\"agent_id\\", \\"task\\": \\"instructions for the sub-agent\\"}}. If write_file, output a JSON string: {{\\"filename\\": \\"index.js\\", \\"content\\": \\"...\\"}}. Otherwise, a query/command string."
++                }}
++                """
++                
++                try:
++                    model = genai.GenerativeModel("gemini-1.5-flash")
++                    response = model.generate_content(
++                        prompt,
++                        generation_config={"response_mime_type": "application/json"}
++                    )
++                    
++                    # Clean response text
++                    raw_text = response.text.strip()
++                    if raw_text.startswith("```"):
++                        first_newline = raw_text.find("\n")
++                        if first_newline != -1:
++                            raw_text = raw_text[first_newline:].strip()
++                        if raw_text.endswith("```"):
++                            raw_text = raw_text[:-3].strip()
++                    
++                    result = json.loads(raw_text)
++                    thought = result.get("thought", "Coordinating workflows.")
++                    action = result.get("action", "done")
++                    args = result.get("args", "")
++
++                    await self.send_log(supervisor["id"], "thought", thought)
++
++                    if action == "done" or not action:
++                        break
++
++                    # 1. DELEGATION TO SUB-AGENTS
++                    if action == "delegate":
++                        try:
++                            del_data = json.loads(args)
++                            target_id = del_data.get("agent")
++                            sub_task = del_data.get("task", "")
++                        except Exception:
++                            # Fallback parse
++                            target_id = args.split(",")[0].strip()
++                            sub_task = args.split(",", 1)[1].strip() if "," in args else ""
++
++                        target_agent = next((a for a in sub_agents if a["id"] == target_id), None)
++                        if not target_agent:
++                            obs = f"Error: Sub-agent '{target_id}' does not exist."
++                            await self.send_log(supervisor["id"], "observation", obs)
++                            context_history += f"\nThought: {thought}\nAction: delegate({target_id})\nObservation: {obs}"
++                            continue
++
++                        # Trigger delegate pulse animation on frontend
++                        await self.websocket.send_json({
++                            "type": "delegate_animation",
++                            "from": supervisor["id"],
++                            "to": target_agent["id"],
++                            "content": sub_task[:40] + "..." if len(sub_task) > 40 else sub_task
++                        })
++
++                        # Execute the sub-agent loop dynamically!
++                        res = await self.execute_agent_loop(target_agent, sub_task, context_history)
++                        obs = f"Observation: Sub-agent '{target_agent['name']}' reported: {res}"
++                        context_history += f"\nThought: {thought}\nAction: delegate({target_id})\nObservation: {obs}"
++                        
++                    # 2. DIRECT FILE/COMMAND TOOL RUNS
++                    else:
++                        await self.websocket.send_json({"type": "agent_status", "agent": supervisor["id"], "status": "acting"})
++                        obs = await self.run_tool(supervisor["id"], action, args)
++                        await self.send_log(supervisor["id"], "observation", obs)
++                        context_history += f"\nThought: {thought}\nAction: {action}({args})\nObservation: {obs}"
++
++                    # Update progress bar
++                    await self.websocket.send_json({"type": "task_progress", "progress": min(95, 10 + turns * 12)})
++                    await asyncio.sleep(1)
++
++                except Exception as e:
++                    err_msg = f"Orchestrator error: {str(e)}"
++                    await self.send_log(supervisor["id"], "observation", err_msg)
++                    break
++            
++            await self.websocket.send_json({"type": "task_progress", "progress": 100})
++            await self.websocket.send_json({"type": "finished"})
++
++        except Exception as e:
++            print(f"Scenario running error: {e}")
++
++    async def run_mock_scenario_sequence(self, scenario_key, agents_seq):
++        """Simulated kịch bản sequence for dry-run."""
++        if scenario_key == "receptionist":
++            # Step 1: Receptionist greets visitor
++            await self.websocket.send_json({"type": "task_progress", "progress": 10})
++            res = await self.execute_agent_loop(
++                agents_seq[0], 
++                "Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Tell Schedule-Manager to inspect calendar.json for availability.", 
++                "Workspace initialized with calendar.json."
++            )
++            
++            # Step 2: Schedule-Manager checks availability
++            await self.websocket.send_json({"type": "task_progress", "progress": 30})
++            await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Check calendar.json for 14:00 CEO meeting."})
++            res = await self.execute_agent_loop(
++                agents_seq[1], 
++                "Read calendar.json to check if 14:00 is open. Report back to Receptionist. If closed, mention 15:00 is open.", 
++                "Lobby coordinates."
++            )
++            
++            # Step 3: Receptionist coordinates scheduling update
++            await self.websocket.send_json({"type": "task_progress", "progress": 50})
++            await self.websocket.send_json({"type": "delegate_animation", "from": "researcher", "to": "supervisor", "content": "Report 14:00 conflict. Suggest 15:00."})
++            res = await self.execute_agent_loop(
++                agents_seq[0],
++                "Alex Rivera agreed to meet at 15:00. Instruct Schedule-Manager to book the 15:00 slot in calendar.json.",
++                "Updated slot."
++            )
++            
++            # Step 4: Schedule-Manager writes updated calendar
++            await self.websocket.send_json({"type": "task_progress", "progress": 70})
++            await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Update calendar.json time slot."})
++            new_calendar_data = {
++                "today": "2026-07-18",
++                "schedules": [
++                    {"time": "14:00", "status": "reserved", "host": "CEO", "visitor": "Alice Smith"},
++                    {"time": "15:00", "status": "reserved", "host": "CEO", "visitor": "Alex Rivera"}
++                ]
++            }
++            res = await self.run_tool(
++                "researcher", 
++                "write_file", 
++                json.dumps({"filename": "calendar.json", "content": json.dumps(new_calendar_data, indent=4)})
++            )
++            await self.send_log("researcher", "observation", res)
++            
++            # Step 5: Host-Notifier runs HITL check (alerting CEO)
++            await self.websocket.send_json({"type": "task_progress", "progress": 85})
++            await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "reviewer", "content": "Notify CEO for gate entrance authorization."})
++            res = await self.execute_agent_loop(
++                agents_seq[3],
++                "Alert the CEO (Host) to authorize gate clearance for Alex Rivera. Execute run_command 'notify-ceo --visitor Alex' which triggers HITL approval.",
++                "Clearance check."
++            )
++            
++            # Step 6: Gatekeeper prints badge
++            await self.websocket.send_json({"type": "task_progress", "progress": 95})
++            await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "developer", "content": "Print visitor pass ticket."})
++            badge_content = """=====================================
+           AETHERNET VISITOR PASS
+ =====================================
+ GUEST: Alex Rivera
+@@ -350,61 +350,45 @@
+ GATE LEVEL: LEVEL 4 AUDITORIUM
+ STATUS: AUTHORIZED BY HOST
+ ====================================="""
+-                res = await self.run_tool(
+-                    "developer",
+-                    "write_file",
+-                    json.dumps({"filename": "visitor_pass_alex.txt", "content": badge_content})
+-                )
+-                await self.send_log("developer", "observation", res)
+-                
+-                # Final greeting
+-                await self.websocket.send_json({"type": "task_progress", "progress": 100})
+-                await self.execute_agent_loop(
+-                    agents_seq[0],
+-                    "Wish visitor Alex Rivera a great meeting and hand over the pass. Finish.",
+-                    context_history
+-                )
+-                await self.websocket.send_json({"type": "finished"})
+-
+-            else:
+-                # Define the default agents sequence execution
+-                agents_seq = [
+-                    {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Coordinate coding and audits."},
+-                    {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+-                    {"id": "developer", "name": "Code-Architect", "role": "Developer", "prompt": "Write application code index.js and database.js."},
+-                    {"id": "reviewer", "name": "Sentinel-Auditor", "role": "QA", "prompt": "Review files for bugs and write security audits."}
+-                ]
+-                
+-                context_history = "Workspace initialized."
+-                
+-                # Step 1: Supervisor creates delegation plan
+-                await self.websocket.send_json({"type": "task_progress", "progress": 10})
+-                res = await self.execute_agent_loop(agents_seq[0], f"Coordinate execution for project '{scenario_key}'. Tell Explorer to research guidelines.", context_history)
+-                context_history += f"\n- Supervisor: {res}"
+-
+-                # Step 2: Researcher researches
+-                await self.websocket.send_json({"type": "task_progress", "progress": 30})
+-                await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Research optimal dependencies."})
+-                res = await self.execute_agent_loop(agents_seq[1], "Find recommended frameworks for fullstack project.", context_history)
+-                context_history += f"\n- Researcher: {res}"
+-
+-                # Step 3: Developer writes files and runs commands
+-                await self.websocket.send_json({"type": "task_progress", "progress": 60})
+-                await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "developer", "content": "Write index.js server and run build."})
+-                res = await self.execute_agent_loop(agents_seq[2], "Write index.js to run Express API server.", context_history)
+-                context_history += f"\n- Developer: {res}"
+-
+-                # Step 4: Reviewer scans code
+-                await self.websocket.send_json({"type": "task_progress", "progress": 90})
+-                await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "reviewer", "content": "Check index.js code and audit."})
+-                res = await self.execute_agent_loop(agents_seq[3], "Analyze index.js for code quality and write audit.md.", context_history)
+-                context_history += f"\n- Reviewer: {res}"
+-
+-                # Finish
+-                await self.websocket.send_json({"type": "task_progress", "progress": 100})
+-                await self.websocket.send_json({"type": "finished"})
+-        except Exception as e:
+-            print(f"Scenario running error: {e}")
++            res = await self.run_tool(
++                "developer",
++                "write_file",
++                json.dumps({"filename": "visitor_pass_alex.txt", "content": badge_content})
++            )
++            await self.send_log("developer", "observation", res)
++            
++            # Final greeting
++            await self.websocket.send_json({"type": "task_progress", "progress": 100})
++            await self.execute_agent_loop(
++                agents_seq[0],
++                "Wish visitor Alex Rivera a great meeting and hand over the pass. Finish.",
++                "Completed."
++            )
++            await self.websocket.send_json({"type": "finished"})
++
++        else:
++            # Step 1: Supervisor creates delegation plan
++            await self.websocket.send_json({"type": "task_progress", "progress": 10})
++            res = await self.execute_agent_loop(agents_seq[0], f"Coordinate execution for project '{scenario_key}'. Tell Explorer to research guidelines.", "Init")
++
++            # Step 2: Researcher researches
++            await self.websocket.send_json({"type": "task_progress", "progress": 30})
++            await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Research optimal dependencies."})
++            res = await self.execute_agent_loop(agents_seq[1], "Find recommended frameworks for fullstack project.", "Researching")
++
++            # Step 3: Developer writes files and runs commands
++            await self.websocket.send_json({"type": "task_progress", "progress": 60})
++            await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "developer", "content": "Write index.js server and run build."})
++            res = await self.execute_agent_loop(agents_seq[2], "Write index.js to run Express API server.", "Scaffolding")
++
++            # Step 4: Reviewer scans code
++            await self.websocket.send_json({"type": "task_progress", "progress": 90})
++            await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "reviewer", "content": "Check index.js code and audit."})
++            res = await self.execute_agent_loop(agents_seq[3], "Analyze index.js for code quality and write audit.md.", "QA checks")
++
++            # Finish
++            await self.websocket.send_json({"type": "task_progress", "progress": 100})
++            await self.websocket.send_json({"type": "finished"})
+ 
+ # WebSocket Connection Manager
+ @app.websocket("/ws")
+@@ -414,7 +414,7 @@
+     
+     try:
+         while True:
+-            # Listen to incoming messages (This loop is now completely non-blocking)
++            # Listen to incoming messages
+             data = await websocket.receive_text()
+             message = json.loads(data)
+             msg_type = message.get("type")
+@@ -421,5 +421,6 @@
+             if msg_type == "start":
+                 scenario_key = message.get("scenario", "web-app")
++                client_agents = message.get("agents") # Dynamic list of agents from frontend
+                 print(f"🚀 Starting scenario: {scenario_key}")
+                 
+                 # Cancel existing running task if any
+@@ -426,7 +426,7 @@
+                     session.active_task.cancel()
+                 
+                 # Execute in background task
+-                session.active_task = asyncio.create_task(session.run_scenario(scenario_key))
++                session.active_task = asyncio.create_task(session.run_scenario(scenario_key, client_agents))
+ 
+             elif msg_type == "hitl_response":
+                 approved = message.get("approved", False)
+@@ -444,4 +444,5 @@
+     import uvicorn
+     uvicorn.run(app, host="127.0.0.1", port=8000)
+ 
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

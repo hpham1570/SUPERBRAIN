@@ -1,0 +1,155 @@
+[
+  {
+    "id": "rag_domain_08",
+    "domain": "Cybersecurity & Zero-Symptom Patching",
+    "context": "RAG 8: Cybersecurity, Audit & Zero-Symptom Patching (Bảo Mật & Vá Lỗi)",
+    "lesson": "Xử lý triệt để SQL Injection, XSS, Prompt Injection; cưỡng chế mã hóa UTF-8 chống lỗi Charmap Codec và tự động sửa traceback.",
+    "keywords": "security, audit, utf8, charmap fix, zero-symptom patching, sql injection",
+    "source": "Aether-Superbrain-RAG"
+  },
+  {
+    "id": "rag_domain_07",
+    "domain": "Real Estate & Villa Studio",
+    "context": "RAG 7: Real Estate & Penthouse Villa Studio (Bất Động Sản Thượng Lưu)",
+    "lesson": "Thiết kế giao diện Tour ảo 360 virtual tour, tính toán lịch trả góp ngân hàng và form đăng ký tham quan thực tế.",
+    "keywords": "real estate, penthouse, luxury villa, virtual tour, mortgage calculator",
+    "source": "Aether-Superbrain-RAG"
+  },
+  {
+    "id": "rag_domain_06",
+    "domain": "Finance & CFO Analytics",
+    "context": "RAG 6: Finance, Stock Analytics & CFO Dashboard (Tài Chính / Chứng Khoán)",
+    "lesson": "Bảng theo dõi danh mục đầu tư Portfolio Tracker, biểu đồ nến kỹ thuật realtime, tính toán PnL tự động và quy trình phân bổ ngân sách AI.",
+    "keywords": "cfo, finance, stock, portfolio, crypto, pnl analytics, budget allocation",
+    "source": "Aether-Superbrain-RAG"
+  },
+  {
+    "id": "rag_domain_05",
+    "domain": "AI System Architecture & ContextBuilder",
+    "context": "RAG 5: AI System Architecture & ContextBuilder (AETHER Stack)",
+    "lesson": "Phân tầng Tier A (Claude - $3.00/1M), Tier B (Gemini - $0.075/1M), Tier C (Llama - $0.00/Local); tích hợp telemetry_start đo lường độ trễ ms.",
+    "keywords": "architecture, contextbuilder, tier routing, claude, gemini, llama, telemetry",
+    "source": "Aether-Superbrain-RAG"
+  },
+  {
+    "id": "rag_domain_04",
+    "domain": "Full-Stack & RESTful API",
+    "context": "RAG 4: Full-Stack Web App & RESTful API (Express / Node.js)",
+    "lesson": "Đóng gói mã nguồn 4 file index.html, style.css, app.js, server.js và package.json; tích hợp công cụ test API HTTP 200 OK.",
+    "keywords": "fullstack, express, nodejs, rest api, server.js, package.json",
+    "source": "Aether-Superbrain-RAG"
+  },
+  {
+    "id": "rag_domain_03",
+    "domain": "Automotive & Supercars",
+    "context": "RAG 3: Automotive & Luxury Showroom (Siêu Xe / Lamborghini / Ferrari)",
+    "lesson": "Động cơ V12 Twin-Turbo, thông số công suất HP, form đăng ký lái thử tích hợp validation ngày giờ và thông báo Toast xác nhận.",
+    "keywords": "supercar, lamborghini, ferrari, test drive, showroom, v12 turbo",
+    "source": "Aether-Superbrain-RAG"
+  },
+  {
+    "id": "rag_domain_02",
+    "domain": "AI Vision & Character Studio",
+    "context": "RAG 2: AI Vision & Character Studio (Tạo Ảnh / Mẫu Nhân Vật)",
+    "lesson": "Khóa tỷ lệ hạt giống (Seed Locking 100%), thiết lập 6 nhóm thuộc tính cố định (Giới tính, Độ tuổi, Khuôn mặt, Tóc, Trang phục, Phong cách) và xuất prompt Midjourney/Flux.1 chuẩn --ar 4:5 --v 6.0.",
+    "keywords": "character, image prompt, midjourney, flux, seed locked, avatar studio",
+    "source": "Aether-Superbrain-RAG"
+  },
+  {
+    "id": "rag_domain_01",
+    "domain": "Luxury Retail & E-Commerce",
+    "context": "RAG 1: E-Commerce & Luxury Retail (Kim Cương / Trang Sức / Đồng Hồ)",
+    "lesson": "Tự động tính tổng tiền giỏ hàng, cập nhật badge count realtime, hiển thị drawer khay trượt và modal xác nhận mã đơn hàng ngẫu nhiên.",
+    "keywords": "diamond, jewelry, luxury watch, cart drawer, checkout modal",
+    "source": "Aether-Superbrain-RAG"
+  },
+  {
+    "id": "mem_002",
+    "domain": "CS",
+    "error_scenario": "Agent bị lặp vô hạn (Infinite Loop) khi gọi đệ quy kiểm tra cấu trúc thư mục.",
+    "lesson_learned": "Luôn luôn phải track các thư mục đã đi qua bằng một biến `visited = set()` để tránh vòng lặp đồ thị.",
+    "keywords": "đệ quy, recursion, infinite loop, duyệt thư mục",
+    "lesson": "Luôn luôn phải track các thư mục đã đi qua bằng một biến `visited = set()` để tránh vòng lặp đồ thị.",
+    "context": "[CS] Agent bị lặp vô hạn (Infinite Loop) khi gọi đệ quy kiểm tra cấu trúc thư mục. (Keywords: đệ quy, recursion, infinite loop, duyệt thư mục)",
+    "vector": null
+  },
+  {
+    "lesson": "Use 'dir' instead of 'ls' when operating in a Windows-based environment to list workspace files.",
+    "context": "Executing file system navigation commands in an environment where standard Unix-like utilities may be unavailable or unsupported.",
+    "vector": null
+  },
+  {
+    "lesson": "Ensure all inputs provided to agents are ASCII-encoded to prevent 'charmap' codec encoding errors with non-standard characters.",
+    "context": "Interacting with sub-agents in a system where character encoding constraints exist for specific language characters like Vietnamese.",
+    "vector": null
+  },
+  {
+    "context": "OpenAI / Rate Limit Errors",
+    "lesson": "Handle API rate limits (HTTP 429) using exponential backoff with random jitter instead of fixed wait loops to prevent cascading stampedes.",
+    "source": "OpenAI Engineering Blog",
+    "vector": null
+  },
+  {
+    "context": "Next.js & Express / Input Security",
+    "lesson": "Avoid unvalidated input interpolation inside SQL queries to prevent remote code execution; use parameterized queries or trusted ORM wrappers.",
+    "source": "Vercel GitHub Security Advisory",
+    "vector": null
+  },
+  {
+    "context": "DeepSeek / Prompt Structuring",
+    "lesson": "For deep reasoning models, wrap goal specifications in triple backticks and request explicit structured JSON output tags to avoid parsing errors.",
+    "source": "DeepSeek V3 Prompting Guide",
+    "vector": null
+  },
+  {
+    "context": "OpenAI / Rate Limit (HTTP 429)",
+    "lesson": "Cơ chế tự động giãn cách gọi API bằng exponential backoff với jitter khi gặp lỗi Rate Limit (HTTP 429).",
+    "source": "OpenAI Engineering Blog",
+    "vector": null
+  },
+  {
+    "context": "Vercel/Express / SQL Injection",
+    "lesson": "Bảo mật tham số đầu vào SQL để ngăn chặn tấn công chèn mã độc (SQL Injection/RCE).",
+    "source": "Vercel Security Advisory",
+    "vector": null
+  },
+  {
+    "context": "DeepSeek / Prompt Parsing",
+    "lesson": "Cách gói prompt trong triple backticks và yêu cầu thẻ JSON cụ thể để tránh lỗi parse.",
+    "source": "DeepSeek Prompt Guide",
+    "vector": null
+  },
+  {
+    "lesson": "Ensure all system file initialization tasks are verified through a confirmation handshake before proceeding to agent delegation.",
+    "context": "Initialization of workspace files like calendar.json must be confirmed by the system state monitor to prevent downstream 'file not found' errors in automated sub-agent task execution.",
+    "vector": null
+  },
+  {
+    "lesson": "Ensure the existence of prerequisite state files like 'calendar.json' is verified via programmatic check before triggering workflow dependencies.",
+    "context": "When initializing a workspace where sub-agents rely on pre-existing configuration or data files for orchestration.",
+    "vector": null
+  },
+  {
+    "context": "Simulating project run for web-app",
+    "lesson": "Ensure web-app modules are decoupled and schema dependencies are validated early to prevent runtime failures.",
+    "source": "Mock-Reflection",
+    "vector": null
+  },
+  {
+    "context": "Simulating project run for security-audit",
+    "lesson": "Ensure security-audit modules are decoupled and schema dependencies are validated early to prevent runtime failures.",
+    "source": "Mock-Reflection",
+    "vector": null
+  },
+  {
+    "context": "Simulating project run for receptionist",
+    "lesson": "Ensure receptionist modules are decoupled and schema dependencies are validated early to prevent runtime failures.",
+    "source": "Mock-Reflection",
+    "vector": null
+  },
+  {
+    "context": "Simulating project run for market-analysis",
+    "lesson": "Ensure market-analysis modules are decoupled and schema dependencies are validated early to prevent runtime failures.",
+    "source": "Mock-Reflection"
+  }
+]

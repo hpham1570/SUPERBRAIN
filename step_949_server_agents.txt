@@ -1,0 +1,43 @@
+Created At: 2026-07-19T05:36:51Z
+Completed At: 2026-07-19T05:36:51Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 971
+Total Bytes: 51061
+Showing lines 456 to 490
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+456:                 await self.websocket.send_json({
+457:                     "type": "file_write",
+458:                     "filename": "calendar.json",
+459:                     "content": json.dumps(calendar_data, indent=4)
+460:                 })
+461: 
+462:             # 1. Resolve agents list (Use client agents if provided, else defaults)
+463:             if client_agents:
+464:                 agents_seq = client_agents
+465:             else:
+466:                 if scenario_key == "receptionist":
+467:                     agents_seq = [
+468:                         {"id": "supervisor", "name": "Aether-Receptionist", "role": "Front Lobby", "prompt": "Greet lobby guests and handle check-ins."},
+469:                         {"id": "researcher", "name": "Schedule-Manager", "role": "Calendar Bot", "prompt": "Verify availability slots and write database schedules."},
+470:                         {"id": "developer", "name": "Gatekeeper-Guard", "role": "Security Coordinator", "prompt": "Generate visitor badges and print files."},
+471:                         {"id": "reviewer", "name": "Host-Notifier", "role": "Internal Routing", "prompt": "Request authorization triggers to access host offices."}
+472:                     ]
+473:                 else:
+474:                     agents_seq = [
+475:                         {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Coordinate coding and audits."},
+476:                         {"id": "planner", "name": "Aether-Planner", "role": "Project Planner", "prompt": "Decompose high-level goals into concrete, structured step-by-step task lists, establish prioritization, and delegate instructions to technical sub-agents."},
+477:                         {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+478:                         {"id": "developer", "name": "Code-Architect", "role": "Developer", "prompt": "Write application code index.js and database.js."},
+479:                         {"id": "db_developer", "name": "DB-Architect", "role": "Database Engineer", "prompt": "Design optimized relational database schemas, write database seeding and migration scripts, and troubleshoot SQL errors."},
+480:                         {"id": "senior_developer", "name": "Senior-Coder", "role": "Senior Developer", "prompt": "Write highly optimized, clean, and well-structured source code, install dependencies, and run validation scripts."},
+481:                         {"id": "reviewer", "name": "Sentinel-Auditor", "role": "QA", "prompt": "Review files for bugs and write security audits."},
+482:                         {"id": "devops", "name": "Aether-DevOps", "role": "DevOps Engineer", "prompt": "Configure CI/CD pipelines, write Dockerfiles and deployment scripts, manage environment variables, and verify production deployment status."}
+483:                     ]
+484: 
+485:             # If mock mode, keep the standard hardcoded sequence for simplicity
+486:             if IS_MOCK_MODE:
+487:                 await self.run_mock_scenario_sequence(scenario_key, agents_seq)
+488:                 return
+489: 
+490:             # --- DYNAMIC ORCHESTRATOR ROUTING LOOP ---
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,17 @@
+Created At: 2026-07-19T08:32:55Z
+Completed At: 2026-07-19T08:32:55Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/app.js`
+Total Lines: 1707
+Total Bytes: 69846
+Showing lines 4 to 12
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+4: 
+5: // --- Default Agent Profiles ---
+6: const SUPERVISOR_PROMPT = [
+7:     "Điều phối luồng công việc mạng lưới Agent:",
+8:     "Aether-Supervisor sẽ quản lý và giao việc cho các Agent vệ tinh:",
+9:     "- Task Orchestration: Phân chia Goal lớn thành các sub-task nhỏ gửi tới các sub-agent chuyên biệt.",
+10:     "- Debate Facilitation: Kích hoạt Debate Room cho nhóm thảo luận Spec trước khi triển khai.",
+11:     "- Review Verification: Gọi Auditor và CFO kiểm tra code trước khi hoàn thành kịch bản."
+12: ].join("\n");
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

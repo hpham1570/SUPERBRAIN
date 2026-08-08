@@ -1,0 +1,24 @@
+Created At: 2026-07-19T01:14:07Z
+Completed At: 2026-07-19T01:14:07Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 699
+Total Bytes: 36579
+Showing lines 520 to 535
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+520:                         obs = "[WARNING] API Key rate-limit exceeded. Switching to simulated mock mode to complete this run..."
+521:                         await self.send_log(supervisor["id"], "observation", obs)
+522:                         await self.run_mock_scenario_sequence(scenario_key, agents_seq)
+523:                         return
+524:                     await self.send_log(supervisor["id"], "observation", err_msg)
+525:                     break
+526:             
+527:             await self.websocket.send_json({"type": "task_progress", "progress": 100})
+528:             await self.websocket.send_json({"type": "finished"})
+529: 
+530:         except Exception as e:
+531:             print(f"Scenario running error: {e}")
+532: 
+533:     async def run_mock_scenario_sequence(self, scenario_key, agents_seq):
+534:         """Simulated kịch bản sequence for dry-run."""
+535:         if scenario_key == "receptionist":
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

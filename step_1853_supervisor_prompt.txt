@@ -1,0 +1,48 @@
+Created At: 2026-07-19T11:47:36Z
+Completed At: 2026-07-19T11:47:37Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/app.js`
+Total Lines: 1710
+Total Bytes: 70459
+Showing lines 1 to 40
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: /* ==========================================================================
+2:    AETHERNET // AI Agent Control Center Core Logic
+3:    ========================================================================== */
+4: 
+5: // --- Default Agent Profiles ---
+6: const SUPERVISOR_PROMPT = [
+7:     "Điều phối luồng công việc mạng lưới Agent (CTO/Director Coordinator):",
+8:     "Aether-Supervisor đại diện trực tiếp cho anh Hai (Founder/CTO) để điều phối toàn bộ network:",
+9:     "- Identity & Role: Là apex node chịu trách nhiệm điều phối, ra quyết định và duyệt output cuối cùng. Không tự viết code.",
+10:     "- Intake & Triage: Phân loại dự án (PHAROCKET / Phố Wall AI / Marketing SaaS SMB / Abbott) và chỉ định agent thực thi.",
+11:     "- Priority Enforcement: Enforce thứ tự ưu tiên: #1 Marketing SaaS (gần doanh thu), #2 Phố Wall AI (monetization/compliance), #3 PHAROCKET / R&D.",
+12:     "- Budget Gate Routing: Route các dự án lớn qua Prof-CFO trước khi giao Code-Architect build.",
+13:     "- Conflict Resolution: Tự quyết định dựa trên category dự án khi có mâu thuẫn ý kiến kỹ thuật vs tài chính.",
+14:     "- Escalation Trigger: Escalate lên anh Hai khi gặp rủi ro pháp lý/tuân thủ, mâu thuẫn định hướng nghiêm trọng, hoặc CFO cấm dự án quan trọng."
+15: ].join("\n");
+16: 
+17: const DEVELOPER_PROMPT = [
+18:     "Triển khai mã nguồn và thiết lập hệ thống:",
+19:     "Code-Architect sẽ trực tiếp viết file và thực thi câu lệnh:",
+20:     "- Code Scaffolding: Tạo mới hoặc chỉnh sửa file mã nguồn Javascript hoặc Python.",
+21:     "- System Command Execution: Cài đặt package dependencies và chạy lệnh terminal.",
+22:     "- Local Sandbox Verification: Tự động chạy biên dịch, gỡ lỗi cú pháp và runtime crash qua node/python sandbox."
+23: ].join("\n");
+24: 
+25: const REVIEWER_PROMPT = [
+26:     "Kiểm thử mã nguồn và đánh giá an ninh:",
+27:     "Sentinel-Auditor sẽ quét lỗi và kiểm định chất lượng tệp tin:",
+28:     "- Source Code Review: Phát hiện các lỗ hổng bảo mật, lỗi logic và lỗ hổng SQL Injection.",
+29:     "- Lint & Bug Scanning: Đảm bảo code sạch lỗi cú pháp, tuân thủ quy chuẩn trước khi lưu trữ.",
+30:     "- Verification Audit: Đưa ra quyết định phê duyệt (GO) hoặc bác bỏ (NO-GO) cho nhà phát triển sửa code."
+31: ].join("\n");
+32: 
+33: const CFO_PROMPT = [
+34:     "Nhiệm vụ kiểm toán tài chính và phê duyệt ngân sách:",
+35:     "Prof-CFO (Giáo sư Harvard CS) sẽ tính toán và phê duyệt chi phí phát triển:",
+36:     "- Cost-Benefit Audit: Tính toán chi phí giờ công dev, compute và API cost cho từng tính năng.",
+37:     "- Monetization Reality Check: Phân biệt rõ R&D (đốt tiền) vs sản phẩm gần/có doanh thu.",
+38:     "- Budget Gate: Yêu cầu trả lời 3 câu trước khi code (Ai trả tiền? Thiệt hại gì nếu không làm? Break-even khi nào?).",
+39:     "- Portfolio Prioritization: Ưu tiên phát triển Marketing SaaS SMB #1, Phố Wall AI #2, PHAROCKET R&D.",
+40:     "- Output Format: Trả về Verdict (GO / NO-GO), Số liệu cụ thể, Rủi ro tài chính và Khuyến nghị."
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,199 @@
+Created At: 2026-07-18T22:42:50Z
+Completed At: 2026-07-18T22:42:50Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 440
+Total Bytes: 22360
+Showing lines 250 to 440
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+250: async def websocket_endpoint(websocket: WebSocket):
+251:     await websocket.accept()
+252:     print("🔌 Client connected via WebSocket.")
+253:     session = AgentSession(websocket)
+254:     
+255:     try:
+256:         while True:
+257:             # Listen to incoming messages
+258:             data = await websocket.receive_text()
+259:             message = json.loads(data)
+260:             msg_type = message.get("type")
+261: 
+262:             if msg_type == "start":
+263:                 scenario_key = message.get("scenario", "web-app")
+264:                 print(f"🚀 Starting scenario: {scenario_key}")
+265:                 
+266:                 # Initialize workspace files
+267:                 shutil.rmtree(WORKSPACE_DIR, ignore_errors=True)
+268:                 os.makedirs(WORKSPACE_DIR, exist_ok=True)
+269:                 await websocket.send_json({"type": "reset_workspace"})
+270: 
+271:                 if scenario_key == "receptionist":
+272:                     # Define Receptionist Agent configurations
+273:                     agents_seq = [
+274:                         {"id": "supervisor", "name": "Aether-Receptionist", "role": "Front Lobby", "prompt": "Greet lobby guests and handle check-ins."},
+275:                         {"id": "researcher", "name": "Schedule-Manager", "role": "Calendar Bot", "prompt": "Verify availability slots and write database schedules."},
+276:                         {"id": "developer", "name": "Gatekeeper-Guard", "role": "Security Coordinator", "prompt": "Generate visitor badges and print files."},
+277:                         {"id": "reviewer", "name": "Host-Notifier", "role": "Internal Routing", "prompt": "Request authorization triggers to access host offices."}
+278:                     ]
+279:                     
+280:                     # Seed calendar.json in workspace directory
+281:                     calendar_data = {
+282:                         "today": "2026-07-18",
+283:                         "schedules": [
+284:                             {"time": "14:00", "status": "reserved", "host": "CEO", "visitor": "Alice Smith"},
+285:                             {"time": "15:00", "status": "available", "host": "CEO", "visitor": None}
+286:                         ]
+287:                     }
+288:                     calendar_path = os.path.join(WORKSPACE_DIR, "calendar.json")
+289:                     with open(calendar_path, "w", encoding="utf-8") as f:
+290:                         json.dump(calendar_data, f, indent=4)
+291:                     
+292:                     # Notify frontend of file write
+293:                     await websocket.send_json({
+294:                         "type": "file_write",
+295:                         "filename": "calendar.json",
+296:                         "content": json.dumps(calendar_data, indent=4)
+297:                     })
+298:                     
+299:                     context_history = "Workspace initialized with calendar.json."
+300:                     
+301:                     # Step 1: Receptionist greets visitor
+302:                     await websocket.send_json({"type": "task_progress", "progress": 10})
+303:                     res = await session.execute_agent_loop(
+304:                         agents_seq[0], 
+305:                         "Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Tell Schedule-Manager to inspect calendar.json for availability.", 
+306:                         context_history
+307:                     )
+308:                     context_history += f"\n- Receptionist: {res}"
+309:                     
+310:                     # Step 2: Schedule-Manager checks availability
+311:                     await websocket.send_json({"type": "task_progress", "progress": 30})
+312:                     await websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Check calendar.json for 14:00 CEO meeting."})
+313:                     res = await session.execute_agent_loop(
+314:                         agents_seq[1], 
+315:                         "Read calendar.json to check if 14:00 is open. Report back to Receptionist. If closed, mention 15:00 is open.", 
+316:                         context_history
+317:                     )
+318:                     context_history += f"\n- Schedule-Manager: {res}"
+319:                     
+320:                     # Step 3: Receptionist coordinates scheduling update
+321:                     await websocket.send_json({"type": "task_progress", "progress": 50})
+322:                     await websocket.send_json({"type": "delegate_animation", "from": "researcher", "to": "supervisor", "content": "Report 14:00 conflict. Suggest 15:00."})
+323:                     res = await session.execute_agent_loop(
+324:                         agents_seq[0],
+325:                         "Alex Rivera agreed to meet at 15:00. Instruct Schedule-Manager to book the 15:00 slot in calendar.json.",
+326:                         context_history
+327:                     )
+328:                     context_history += f"\n- Receptionist: {res}"
+329:                     
+330:                     # Step 4: Schedule-Manager writes updated calendar
+331:                     await websocket.send_json({"type": "task_progress", "progress": 70})
+332:                     await websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Update calendar.json time slot."})
+333:                     new_calendar_data = {
+334:                         "today": "2026-07-18",
+335:                         "schedules": [
+336:                             {"time": "14:00", "status": "reserved", "host": "CEO", "visitor": "Alice Smith"},
+337:                             {"time": "15:00", "status": "reserved", "host": "CEO", "visitor": "Alex Rivera"}
+338:                         ]
+339:                     }
+340:                     res = await session.run_tool(
+341:                         "researcher", 
+342:                         "write_file", 
+343:                         json.dumps({"filename": "calendar.json", "content": json.dumps(new_calendar_data, indent=4)})
+344:                     )
+345:                     await session.send_log("researcher", "observation", res)
+346:                     context_history += f"\n- Schedule-Manager: Updated calendar.json."
+347:                     
+348:                     # Step 5: Host-Notifier runs HITL check (alerting CEO)
+349:                     await websocket.send_json({"type": "task_progress", "progress": 85})
+350:                     await websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "reviewer", "content": "Notify CEO for gate entrance authorization."})
+351:                     res = await session.execute_agent_loop(
+352:                         agents_seq[3],
+353:                         "Alert the CEO (Host) to authorize gate clearance for Alex Rivera. Execute run_command 'notify-ceo --visitor Alex' which triggers HITL approval.",
+354:                         context_history
+355:                     )
+356:                     context_history += f"\n- Host-Notifier: {res}"
+357:                     
+358:                     # Step 6: Gatekeeper prints badge
+359:                     await websocket.send_json({"type": "task_progress", "progress": 95})
+360:                     await websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "developer", "content": "Print visitor pass ticket."})
+361:                     badge_content = """=====================================
+362:           AETHERNET VISITOR PASS
+363: =====================================
+364: GUEST: Alex Rivera
+365: HOST: CEO
+366: TIME: 15:00 (Reserved)
+367: DATE: 2026-07-18
+368: GATE LEVEL: LEVEL 4 AUDITORIUM
+369: STATUS: AUTHORIZED BY HOST
+370: ====================================="""
+371:                     res = await session.run_tool(
+372:                         "developer",
+373:                         "write_file",
+374:                         json.dumps({"filename": "visitor_pass_alex.txt", "content": badge_content})
+375:                     )
+376:                     await session.send_log("developer", "observation", res)
+377:                     
+378:                     # Final greeting
+379:                     await websocket.send_json({"type": "task_progress", "progress": 100})
+380:                     await session.execute_agent_loop(
+381:                         agents_seq[0],
+382:                         "Wish visitor Alex Rivera a great meeting and hand over the pass. Finish.",
+383:                         context_history
+384:                     )
+385:                     await websocket.send_json({"type": "finished"})
+386: 
+387:                 else:
+388:                     # Define the default agents sequence execution
+389:                     agents_seq = [
+390:                         {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Coordinate coding and audits."},
+391:                         {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+392:                         {"id": "developer", "name": "Code-Architect", "role": "Developer", "prompt": "Write application code index.js and database.js."},
+393:                         {"id": "reviewer", "name": "Sentinel-Auditor", "role": "QA", "prompt": "Review files for bugs and write security audits."}
+394:                     ]
+395:                     
+396:                     context_history = "Workspace initialized."
+397:                     
+398:                     # Step 1: Supervisor creates delegation plan
+399:                     await websocket.send_json({"type": "task_progress", "progress": 10})
+400:                     res = await session.execute_agent_loop(agents_seq[0], f"Coordinate execution for project '{scenario_key}'. Tell Explorer to research guidelines.", context_history)
+401:                     context_history += f"\n- Supervisor: {res}"
+402: 
+403:                     # Step 2: Researcher researches
+404:                     await websocket.send_json({"type": "task_progress", "progress": 30})
+405:                     await websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Research optimal dependencies."})
+406:                     res = await session.execute_agent_loop(agents_seq[1], "Find recommended frameworks for fullstack project.", context_history)
+407:                     context_history += f"\n- Researcher: {res}"
+408: 
+409:                     # Step 3: Developer writes files and runs commands
+410:                     await websocket.send_json({"type": "task_progress", "progress": 60})
+411:                     await websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "developer", "content": "Write index.js server and run build."})
+412:                     res = await session.execute_agent_loop(agents_seq[2], "Write index.js to run Express API server.", context_history)
+413:                     context_history += f"\n- Developer: {res}"
+414: 
+415:                     # Step 4: Reviewer scans code
+416:                     await websocket.send_json({"type": "task_progress", "progress": 90})
+417:                     await websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "reviewer", "content": "Check index.js code and audit."})
+418:                     res = await session.execute_agent_loop(agents_seq[3], "Analyze index.js for code quality and write audit.md.", context_history)
+419:                     context_history += f"\n- Reviewer: {res}"
+420: 
+421:                     # Finish
+422:                     await websocket.send_json({"type": "task_progress", "progress": 100})
+423:                     await websocket.send_json({"type": "finished"})
+424: 
+425: 
+426:             elif msg_type == "hitl_response":
+427:                 approved = message.get("approved", False)
+428:                 print(f"HITL Response received: {approved}")
+429:                 session.hitl_approved = approved
+430:                 session.hitl_event.set()
+431: 
+432:     except WebSocketDisconnect:
+433:         print("🔌 Client disconnected.")
+434:     except Exception as e:
+435:         print(f"Error: {str(e)}")
+436: 
+437: if __name__ == "__main__":
+438:     import uvicorn
+439:     uvicorn.run(app, host="127.0.0.1", port=8000)
+440: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

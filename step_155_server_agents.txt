@@ -1,0 +1,89 @@
+Created At: 2026-07-18T20:49:15Z
+Completed At: 2026-07-18T20:49:15Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 299
+Total Bytes: 13800
+Showing lines 180 to 260
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+180:             Your System Prompt: {agent_config['prompt']}
+181: 
+182:             Your Goal: {task_description}
+183:             Current workspace context: {context_history}
+184: 
+185:             You can use these tool commands. Output EXACTLY in this JSON format:
+186:             {{
+187:                 "thought": "Write your next reasoning steps here...",
+188:                 "action": "write_file" | "read_file" | "web_search" | "run_command" | "done",
+189:                 "args": "arguments for the tool. For write_file, output args as a JSON string like: {{\\"filename\\": \\"index.js\\", \\"content\\": \\"console.log(123)\\"}}. For run_command or web_search, just output the string command or search query."
+190:             }}
+191:             """
+192:             try:
+193:                 model = genai.GenerativeModel("gemini-1.5-flash")
+194:                 response = model.generate_content(
+195:                     prompt,
+196:                     generation_config={"response_mime_type": "application/json"}
+197:                 )
+198:                 
+199:                 # Parse JSON structure
+200:                 result = json.loads(response.text.strip())
+201:                 thought = result.get("thought", "Analyzing system state.")
+202:                 action = result.get("action", "done")
+203:                 args = result.get("args", "")
+204: 
+205:                 await self.send_log(agent_id, "thought", thought)
+206:                 
+207:                 if action == "done" or not action:
+208:                     await self.websocket.send_json({"type": "agent_status", "agent": agent_id, "status": "idle"})
+209:                     return f"Completed tasks: {thought}"
+210: 
+211:                 # Update Status and execute tool
+212:                 await self.websocket.send_json({"type": "agent_status", "agent": agent_id, "status": "acting"})
+213:                 observation = await self.run_tool(agent_id, action, args)
+214:                 await self.send_log(agent_id, "observation", observation)
+215: 
+216:                 await self.websocket.send_json({"type": "agent_status", "agent": agent_id, "status": "idle"})
+217:                 return f"Executed {action}. Result: {observation}"
+218: 
+219:             except Exception as e:
+220:                 error_msg = f"API error or parsing failure: {str(e)}"
+221:                 await self.send_log(agent_id, "observation", error_msg)
+222:                 await self.websocket.send_json({"type": "agent_status", "agent": agent_id, "status": "idle"})
+223:                 return error_msg
+224: 
+225: # WebSocket Connection Manager
+226: @app.websocket("/ws")
+227: async def websocket_endpoint(websocket: WebSocket):
+228:     await websocket.accept()
+229:     print("🔌 Client connected via WebSocket.")
+230:     session = AgentSession(websocket)
+231:     
+232:     try:
+233:         while True:
+234:             # Listen to incoming messages
+235:             data = await websocket.receive_text()
+236:             message = json.loads(data)
+237:             msg_type = message.get("type")
+238: 
+239:             if msg_type == "start":
+240:                 scenario_key = message.get("scenario", "web-app")
+241:                 print(f"🚀 Starting scenario: {scenario_key}")
+242:                 
+243:                 # Initialize workspace files
+244:                 shutil.rmtree(WORKSPACE_DIR, ignore_errors=True)
+245:                 os.makedirs(WORKSPACE_DIR, exist_ok=True)
+246:                 await websocket.send_json({"type": "reset_workspace"})
+247: 
+248:                 # Define the agents sequence execution
+249:                 agents_seq = [
+250:                     {"id": "supervisor", "name": "Aether-Supervisor", "role": "Coordinator", "prompt": "Coordinate coding and audits."},
+251:                     {"id": "researcher", "name": "Web-Explorer", "role": "Researcher", "prompt": "Search web and recommend structures."},
+252:                     {"id": "developer", "name": "Code-Architect", "role": "Developer", "prompt": "Write application code index.js and database.js."},
+253:                     {"id": "reviewer", "name": "Sentinel-Auditor", "role": "QA", "prompt": "Review files for bugs and write security audits."}
+254:                 ]
+255:                 
+256:                 context_history = "Workspace initialized."
+257:                 
+258:                 # Step 1: Supervisor creates delegation plan
+259:                 await websocket.send_json({"type": "task_progress", "progress": 10})
+260:                 res = await session.execute_agent_loop(agents_seq[0], f"Coordinate execution for project '{scenario_key}'. Tell Explorer to research guidelines.", context_history)
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

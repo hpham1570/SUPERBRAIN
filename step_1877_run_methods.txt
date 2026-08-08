@@ -1,0 +1,94 @@
+Created At: 2026-07-19T11:48:10Z
+Completed At: 2026-07-19T11:48:10Z
+File Path: `file:///C:/Users/Lap/.gemini/antigravity/scratch/ai-agent-control/server.py`
+Total Lines: 1458
+Total Bytes: 84777
+Showing lines 1235 to 1320
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1235: 
+1236:     async def run_mock_scenario_sequence(self, scenario_key, agents_seq):
+1237:         """Simulated kịch bản sequence for dry-run."""
+1238:         if scenario_key == "receptionist":
+1239:             # Step 1: Receptionist greets visitor
+1240:             await self.websocket.send_json({"type": "task_progress", "progress": 10})
+1241:             res = await self.execute_agent_loop(
+1242:                 agents_seq[0], 
+1243:                 "Greet visitor Alex Rivera who wants to meet the CEO at 14:00. Tell Schedule-Manager to inspect calendar.json for availability.", 
+1244:                 "Workspace initialized with calendar.json."
+1245:             )
+1246:             
+1247:             # Step 2: Schedule-Manager checks availability
+1248:             await self.websocket.send_json({"type": "task_progress", "progress": 30})
+1249:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Check calendar.json for 14:00 CEO meeting."})
+1250:             res = await self.execute_agent_loop(
+1251:                 agents_seq[1], 
+1252:                 "Read calendar.json to check if 14:00 is open. Report back to Receptionist. If closed, mention 15:00 is open.", 
+1253:                 "Lobby coordinates."
+1254:             )
+1255:             
+1256:             # Step 3: Receptionist coordinates scheduling update
+1257:             await self.websocket.send_json({"type": "task_progress", "progress": 50})
+1258:             await self.websocket.send_json({"type": "delegate_animation", "from": "researcher", "to": "supervisor", "content": "Report 14:00 conflict. Suggest 15:00."})
+1259:             res = await self.execute_agent_loop(
+1260:                 agents_seq[0],
+1261:                 "Alex Rivera agreed to meet at 15:00. Instruct Schedule-Manager to book the 15:00 slot in calendar.json.",
+1262:                 "Updated slot."
+1263:             )
+1264:             
+1265:             # Step 4: Schedule-Manager writes updated calendar
+1266:             await self.websocket.send_json({"type": "task_progress", "progress": 70})
+1267:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "researcher", "content": "Update calendar.json time slot."})
+1268:             new_calendar_data = {
+1269:                 "today": "2026-07-18",
+1270:                 "schedules": [
+1271:                     {"time": "14:00", "status": "reserved", "host": "CEO", "visitor": "Alice Smith"},
+1272:                     {"time": "15:00", "status": "reserved", "host": "CEO", "visitor": "Alex Rivera"}
+1273:                 ]
+1274:             }
+1275:             res = await self.run_tool(
+1276:                 "researcher", 
+1277:                 "write_file", 
+1278:                 json.dumps({"filename": "calendar.json", "content": json.dumps(new_calendar_data, indent=4)})
+1279:             )
+1280:             await self.send_log("researcher", "observation", res)
+1281:             
+1282:             # Step 5: Host-Notifier runs HITL check (alerting CEO)
+1283:             await self.websocket.send_json({"type": "task_progress", "progress": 85})
+1284:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "reviewer", "content": "Notify CEO for gate entrance authorization."})
+1285:             res = await self.execute_agent_loop(
+1286:                 agents_seq[3],
+1287:                 "Alert the CEO (Host) to authorize gate clearance for Alex Rivera. Execute run_command 'notify-ceo --visitor Alex' which triggers HITL approval.",
+1288:                 "Clearance check."
+1289:             )
+1290:             
+1291:             # Step 6: Gatekeeper prints badge
+1292:             await self.websocket.send_json({"type": "task_progress", "progress": 95})
+1293:             await self.websocket.send_json({"type": "delegate_animation", "from": "supervisor", "to": "developer", "content": "Print visitor pass ticket."})
+1294:             badge_content = """=====================================
+1295:           AETHERNET VISITOR PASS
+1296: =====================================
+1297: GUEST: Alex Rivera
+1298: HOST: CEO
+1299: TIME: 15:00 (Reserved)
+1300: DATE: 2026-07-18
+1301: GATE LEVEL: LEVEL 4 AUDITORIUM
+1302: STATUS: AUTHORIZED BY HOST
+1303: ====================================="""
+1304:             res = await self.run_tool(
+1305:                 "developer",
+1306:                 "write_file",
+1307:                 json.dumps({"filename": "visitor_pass_alex.txt", "content": badge_content})
+1308:             )
+1309:             await self.send_log("developer", "observation", res)
+1310:             
+1311:             # Final greeting
+1312:             await self.websocket.send_json({"type": "task_progress", "progress": 100})
+1313:             await self.execute_agent_loop(
+1314:                 agents_seq[0],
+1315:                 "Wish visitor Alex Rivera a great meeting and hand over the pass. Finish.",
+1316:                 "Completed."
+1317:             )
+1318:             await self.websocket.send_json({"type": "finished"})
+1319: 
+1320:         else:
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
